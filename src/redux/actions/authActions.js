@@ -27,7 +27,9 @@ export const AuthActions = {
                 id: respData.id,
                 username: respData.username,
                 email: respData.email,
-                roles: respData.roles
+                name: respData.name,
+                surname: respData.surname,
+                role: respData.role
             };
             dispatch({
                 type: SIGN_IN,

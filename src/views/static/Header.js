@@ -2,20 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import Roles from '../auth/Roles';
-import { AuthButton } from '../components/AuthButton';
+import Roles from '../../auth/Roles';
+import { AuthButton } from '../../components/AuthButton';
 
 const Header = () => {
     let location = useLocation();
     const auth = useSelector(state => state.auth.currentUser);
 
     const [path, setPath] = useState(location);
-    const [roles, setRoles] = useState(Roles.USER);
+    const [role, setRole] = useState(Roles.USER);
 
     useEffect(() => {
         setPath(location.pathname.split('/')[1]);
         if (auth) {
-            setRoles(auth.roles);
+            setRole(auth.role);
         }
     }, [location, auth]);
 
@@ -34,7 +34,7 @@ const Header = () => {
                     Home
                 </Link>
                 <ul className={`navbar-nav`}>
-                    {roles.includes(Roles.ADMIN) ?
+                    {role === Roles.ADMIN ?
                         (
                             <li className={`nav-item`}>
                                 <React.Fragment>
