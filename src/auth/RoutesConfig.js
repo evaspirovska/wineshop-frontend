@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import HomePage from '../views/HomePage';
 import SignInForm from '../views/auth/SignInForm';
 import Roles from './Roles';
+import SignUpForm from "../views/auth/SignUpForm";
 
 export const PrivateRoutes = [
 
@@ -24,6 +25,15 @@ export const PublicRoutes = [
         component: SignInForm,
         path: '/signin',
         title: 'Sign In',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: SignUpForm,
+        path: '/signup',
+        title: 'Sign Up',
         permission: [
             Roles.ADMIN,
             Roles.USER

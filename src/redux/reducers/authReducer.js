@@ -1,6 +1,6 @@
 import { isExpired } from 'react-jwt';
 import { AUTH_TOKEN } from '../../axios/axiosInstance';
-import {AUTHENTICATE_TOKEN, CURRENT_USER, SIGN_IN, SIGN_OUT, UPDATE_TOKEN} from '../actionTypes';
+import {AUTHENTICATE_TOKEN, CURRENT_USER, SIGN_IN, SIGN_OUT, SIGN_UP, UPDATE_TOKEN} from '../actionTypes';
 
 const initialState = {
     currentUser: null,
@@ -24,6 +24,11 @@ export const AuthReducer = (state = initialState, action) => {
                 ...state,
                 currentUser: null,
                 token: null
+            };
+        case SIGN_UP:
+            return {
+                ...state,
+                users: [...state.users, action.user]
             };
         case UPDATE_TOKEN:
             let token = action.payload;

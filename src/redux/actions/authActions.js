@@ -1,23 +1,27 @@
 import axios from '../../axios/axiosInstance';
-import {AUTHENTICATE_TOKEN, SIGN_IN, SIGN_OUT, UPDATE_TOKEN} from '../actionTypes';
+import {AUTHENTICATE_TOKEN, SIGN_IN, SIGN_OUT, SIGN_UP, UPDATE_TOKEN} from '../actionTypes';
 
 export const AuthActions = {
-    signUp: (name, surname, username, email, password, role) => dispatch => {
-        axios.post('/auth/register', {
+    signUp: (name, surname, username, email, password, role, callback) => dispatch => {
+        axios.post('/auth/signup', {
             name,
             surname,
             username,
             email,
             password,
             role
-        }).then(() => {
-            dispatch(AuthActions.signIn(username, password));
-        }).catch((resp) => {
-            alert(resp.message);
+        }).then(resp => {
+            dispatch({
+                type: SIGN_UP,
+                user: resp.data,
+            });
+            callback(true);
+        }).catch(() => {
+            callback(false);
         });
     },
     signIn: (username, password, callback) => dispatch => {
-        axios.post('/auth/login', {
+        axios.post('/auth/signin', {
             username,
             password
         }).then((jwtResponse) => {
