@@ -6,12 +6,31 @@ import SignInForm from '../views/auth/SignInForm';
 import AdminPanel from "../views/admin/AdminPanel";
 import Roles from './Roles';
 import SignUpForm from "../views/auth/SignUpForm";
+import CategoryForm from "../views/admin/category/CategoryForm";
 
 export const PrivateRoutes = [
     {
         component: AdminPanel,
         path: '/admin',
         title: 'Admin Panel',
+        exact: true,
+        permission: [
+            Roles.ADMIN
+        ]
+    },
+    {
+        component: CategoryForm,
+        path: '/categories/add',
+        title: 'Add Category',
+        exact: true,
+        permission: [
+            Roles.ADMIN
+        ]
+    },
+    {
+        component: CategoryForm,
+        path: '/categories/edit/:categoryId',
+        title: 'Edit Category',
         exact: true,
         permission: [
             Roles.ADMIN

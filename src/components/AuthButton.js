@@ -2,14 +2,20 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {AuthActions} from '../redux/actions/authActions';
+import {wrapComponent} from "react-snackbar-alert";
 
-export const AuthButton = ({path}) => {
+export const AuthButton = wrapComponent( function ({ path, createSnackbar }) {
     const auth = useSelector(state => state.auth.currentUser);
     const dispatch = useDispatch();
 
     const signOut = () => {
         dispatch(AuthActions.signOut());
         window.location = '/';
+        createSnackbar({
+            message: "Successfully signed out.",
+            timeout: 2500,
+            theme: 'success'
+        });
     };
 
     return (
@@ -33,4 +39,4 @@ export const AuthButton = ({path}) => {
             }
         </React.Fragment>
     );
-};
+});

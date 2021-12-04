@@ -40,14 +40,14 @@ const Header = () => {
                                 <Link
                                     to="/users"
                                     replace={false}
-                                    className={`nav-link shadow-outer ${activePath('users')}`}
+                                    className={`nav-link nav-item shadow-outer ${activePath('users')}`}
                                 >
                                     Users
                                 </Link>
                                 <Link
                                     to="/admin"
                                     replace={false}
-                                    className={`nav-link shadow-outer ${activePath('admin')}`}
+                                    className={`nav-link nav-item shadow-outer ${activePath('admin')}`}
                                 >
                                     Admin
                                 </Link>
