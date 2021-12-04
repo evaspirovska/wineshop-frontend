@@ -5,6 +5,7 @@ import {
     FETCH_CATEGORY,
     UPDATE_CATEGORY
 } from "../actionTypes";
+import {sortElementsByDateCreated} from "../../utils/utils";
 
 const initialState = {
     categories: []
@@ -15,13 +16,13 @@ export const CategoryReducer = (state = initialState, action) => {
         case FETCH_CATEGORIES:
             return {
                 ...state,
-                categories: action.categories
+                categories: sortElementsByDateCreated(action.categories)
             };
         case FETCH_CATEGORY:
             const prevCategories = state.categories.filter(category => category.id !== action.category.id);
             return {
                 ...state,
-                clients: [...prevCategories, action.category],
+                categories: [...prevCategories, action.category],
             };
         case UPDATE_CATEGORY:
             const categories = state.categories.filter(category=>category.id !== action.category.id)
