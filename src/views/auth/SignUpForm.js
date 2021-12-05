@@ -38,11 +38,11 @@ const SignUpForm = wrapComponent(function ({createSnackbar}) {
             dispatch(AuthActions.signUp(values.name, values.surname, values.username, values.email,
                 values.password, null, success => {
                     createSnackbar({
-                        message: success ? 'Successfully Signed Up' : 'Error while signing up. Try again!',
+                        message: success ? 'Successfully signed up.' : 'Error while signing up. Try again!',
                         timeout: 2500,
                         theme: success ? 'success' : 'error'
                     });
-                    success && history.push('/signin');
+                    success && history.push('/');
                 }));
         }
     });

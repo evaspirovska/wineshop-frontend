@@ -1,5 +1,5 @@
 import axios from '../../axios/axiosInstance';
-import {AUTHENTICATE_TOKEN, SIGN_IN, SIGN_OUT, SIGN_UP, UPDATE_TOKEN} from '../actionTypes';
+import {AUTHENTICATE_TOKEN, SIGN_IN, SIGN_OUT, UPDATE_TOKEN} from '../actionTypes';
 
 export const AuthActions = {
     signUp: (name, surname, username, email, password, role, callback) => dispatch => {
@@ -10,14 +10,11 @@ export const AuthActions = {
             email,
             password,
             role
-        }).then(resp => {
-            dispatch({
-                type: SIGN_UP,
-                user: resp.data,
-            });
-            callback(true);
-        }).catch(() => {
-            callback(false);
+        }).then(response => {
+            dispatch(AuthActions.signIn(username, password));
+            callback(true, response);
+        }).catch((error) => {
+            callback(false, error);
         });
     },
     signIn: (username, password, callback) => dispatch => {
@@ -25,15 +22,15 @@ export const AuthActions = {
             username,
             password
         }).then((jwtResponse) => {
-            const respData = jwtResponse.data;
-            const token = respData.token;
+            const response = jwtResponse.data;
+            const token = response.token;
             const user = {
-                id: respData.id,
-                username: respData.username,
-                email: respData.email,
-                name: respData.name,
-                surname: respData.surname,
-                role: respData.role
+                id: response.id,
+                username: response.username,
+                email: response.email,
+                name: response.name,
+                surname: response.surname,
+                role: response.role
             };
             dispatch({
                 type: SIGN_IN,

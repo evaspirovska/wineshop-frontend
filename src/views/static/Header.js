@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {useLocation} from 'react-router';
+import {Link} from 'react-router-dom';
 import Roles from '../../auth/Roles';
-import { AuthButton } from '../../components/AuthButton';
+import {AuthButton} from '../../components/AuthButton';
 
 const Header = () => {
     let location = useLocation();
@@ -19,7 +19,7 @@ const Header = () => {
         }
     }, [location, auth]);
 
-    const activePath = (tabPath)=>{
+    const activePath = (tabPath) => {
         return path === tabPath ? 'header-active' : ''
     }
 
@@ -36,23 +36,28 @@ const Header = () => {
                 <ul className={`navbar-nav`}>
                     {role === Roles.ADMIN ?
                         (
-                            <li className={`nav-item`}>
-                                <React.Fragment>
-                                    <Link
-                                        to="/users"
-                                        replace={false}
-                                        className={`nav-link shadow-outer ${activePath('users')}`}
-                                    >
-                                        Users
-                                    </Link>
-                                </React.Fragment>
-                            </li>
+                            <React.Fragment>
+                                <Link
+                                    to="/users"
+                                    replace={false}
+                                    className={`nav-link nav-item shadow-outer ${activePath('users')}`}
+                                >
+                                    Users
+                                </Link>
+                                <Link
+                                    to="/admin"
+                                    replace={false}
+                                    className={`nav-link nav-item shadow-outer ${activePath('admin')}`}
+                                >
+                                    Admin
+                                </Link>
+                            </React.Fragment>
                         )
                         :
                         null
                     }
                     <li className={`nav-item`}>
-                        <AuthButton path={path} />
+                        <AuthButton path={path}/>
                     </li>
                 </ul>
             </div>

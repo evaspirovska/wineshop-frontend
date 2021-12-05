@@ -30,7 +30,7 @@ const SignInForm = wrapComponent(function ({createSnackbar}) {
             const {username, password} = values;
             dispatch(AuthActions.signIn(username, password, success => {
                 createSnackbar({
-                    message: success ? 'Successfully Signed In' : 'Incorrect Username or Password',
+                    message: success ? 'Successfully signed in' : 'Incorrect Username or Password',
                     timeout: 2500,
                     theme: success ? 'success' : 'error'
                 });
