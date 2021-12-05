@@ -64,7 +64,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                             timeout: 2500,
                             theme: success ? "success" : "error",
                         });
-                        history.push(`/categories/edit/${response.data.id}`);
+                        success && history.push(`/categories/edit/${response.data.id}`);
                     })
                 );
 
