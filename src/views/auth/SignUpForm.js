@@ -15,9 +15,11 @@ const validationSchema = yup.object({
     email: yup.string('Enter your email').required('Email is required'),
     username: yup.string('Enter your username').required('Username is required'),
     password: yup.string('Enter your password').required('Password is required')
-        .oneOf([yup.ref('repeatPassword'), null], 'Passwords must match'),
+        .oneOf([yup.ref('repeatPassword'), null], 'Passwords must match')
+        .min(6, 'Password should be of minimum 6 characters length'),
     repeatPassword: yup.string('Please repeat your password').required('Repeat your password')
-        .oneOf([yup.ref('password'), null], 'Passwords must match'),
+        .oneOf([yup.ref('password'), null], 'Passwords must match')
+        .min(6, 'Password should be of minimum 6 characters length'),
 });
 
 const SignUpForm = wrapComponent(function ({createSnackbar}) {
