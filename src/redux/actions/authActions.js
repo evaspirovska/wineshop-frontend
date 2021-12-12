@@ -3,7 +3,7 @@ import {AUTHENTICATE_TOKEN, SIGN_IN, SIGN_OUT, UPDATE_TOKEN} from '../actionType
 
 export const AuthActions = {
     signUp: (name, surname, username, email, password, role, callback) => dispatch => {
-        axios.post('/auth/signup', {
+        axios.post('/auth/register', {
             name,
             surname,
             username,
@@ -18,7 +18,7 @@ export const AuthActions = {
         });
     },
     signIn: (username, password, callback) => dispatch => {
-        axios.post('/auth/signin', {
+        axios.post('/auth/login', {
             username,
             password
         }).then((jwtResponse) => {

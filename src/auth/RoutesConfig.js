@@ -7,6 +7,10 @@ import AdminPanel from "../views/admin/AdminPanel";
 import Roles from './Roles';
 import SignUpForm from "../views/auth/SignUpForm";
 import CategoryForm from "../views/admin/category/CategoryForm";
+import ChangePasswordForm from "../views/user/ChangePasswordForm";
+import ForgotPasswordForm from "../views/user/ForgotPasswordForm";
+import InvalidTokenView from "../views/user/InvalidTokenView";
+import SentEmailView from "../views/user/SentEmailView";
 
 export const PrivateRoutes = [
     {
@@ -67,6 +71,42 @@ export const PublicRoutes = [
             Roles.USER
         ]
     },
+    {
+        component: ForgotPasswordForm,
+        path: '/forgot-password',
+        title: 'Forgot Password',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: ChangePasswordForm,
+        path: '/change-password/:authToken',
+        title: 'Change Password',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: SentEmailView,
+        path: '/forgot-password/sent-email',
+        title: 'Successfully sent email',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: InvalidTokenView,
+        path: '/forgot-password/invalid-token',
+        title: 'Invalid Token',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    }
 ];
 
 const AllRoutes = [...PrivateRoutes, ...PublicRoutes];
