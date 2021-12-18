@@ -40,8 +40,8 @@ export const AttributeActions = {
             callback(false, error)
         });
     },
-    updateAttribute: (id, attribute, callback) => dispatch => {
-        axios.put(`/attributes/update/${id}`, attribute)
+    updateAttribute: (attribute, callback) => dispatch => {
+        axios.put(`/attributes/update`, attribute)
             .then(response => {
                 dispatch({
                     type: UPDATE_ATTRIBUTE,

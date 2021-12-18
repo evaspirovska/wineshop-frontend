@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {useFormik, getIn} from "formik";
+import React, {useEffect, useRef} from "react";
+import {Form, Field, FieldArray, Formik, useFormikContext} from "formik";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
 
 const validationSchema = yup.object({
     name: yup.string("Enter Category").required("Category is required")
@@ -20,49 +21,52 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
     const history = useHistory();
     const {categoryId} = useParams();
-    const [category, setCategory] = useState({name: ""});
-    const [attributesAndTextFields, setAttributesAndTextFields] = useState({
-        attributes: [{
-            id: -1,
-            name: "",
-            suffix: "",
-            categoryId: -1,
-            isNumeric: false
-        }],
-        textFields: []
-    })
+    const formikRef = useRef(null)
 
     const initialValues = {
-        name: category.name,
-        attributes: attributesAndTextFields.attributes
+        name: "",
+        attributes: []
     };
+
+    function onChangeAttribute(e, field, values, setValues, action, i) {
+        if(Boolean(categoryId) && action === "delete"){
+            deleteAttribute(values.attributes[i].id)
+        }
+        const attributes = [...values.attributes];
+        if(action === "add"){
+            attributes.push({
+                id: -1,
+                name: "",
+                suffix: "",
+                categoryId: -1,
+                numeric: false
+            })
+        }
+        else if(action === "delete"){
+            attributes.splice(i, 1)
+        }
+        setValues({ ...values, attributes });
+        field.onChange(e);
+    }
 
     useEffect(() => {
         if (Boolean(categoryId)) {
             dispatch(CategoryActions.fetchCategory(categoryId, (success, response) => {
                 if (Boolean(success)) {
-                    setCategory(response.data)
+                    formikRef.current.setFieldValue("name", response.data.name)
                     dispatch(AttributeActions.fetchAttributesByCategory(categoryId, (success, response) => {
-                        if(Boolean(success)){
-                            let temp = response.data
-                            temp.push({
-                                id: -1,
-                                name: "",
-                                suffix: "",
-                                categoryId: -1,
-                                isNumeric: true
-                            })
-                            let prevState = {...attributesAndTextFields}
-                            prevState.attributes = temp
-                            setAttributesAndTextFields(prevState)
-                        }
-                        else {
-                            createSnackbar({
-                                message: 'Attributes fetching error!',
-                                timeout: 2500,
-                                theme: 'error'
-                            });
-                        }
+                        setTimeout(function (){ //da ne se pojavi error dodeka refreshne, ako mozhe
+                            if(Boolean(success)){//bolje reshenie da se najde bi bilo top (da odma se pojavat atributi bez refresh)
+                                formikRef.current.setFieldValue("attributes", response.data)
+                            }
+                            else {
+                                createSnackbar({
+                                    message: 'Attributes fetching error!',
+                                    timeout: 2500,
+                                    theme: 'error'
+                                });
+                            }
+                        }, 1000)
                     }))
                 } else {
                     createSnackbar({
@@ -76,109 +80,76 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
         }
     }, []);
 
-    const formik = useFormik({
-        initialValues: initialValues,
-        validationSchema,
-        enableReinitialize: true,
-        onSubmit: values => {
-            if (categoryId) {
-                dispatch(
-                    CategoryActions.updateCategory(categoryId, values, success => {
-                        createSnackbar({
-                            message: success ? "Successfully Updated Category" : "Category failed to Update",
-                            timeout: 2500,
-                            theme: success ? "success" : "error",
-                        });
-                    })
-                );
-            } else {
-                dispatch(
-                    CategoryActions.addCategory(values, (success, response) => {
-                        createSnackbar({
-                            message: success ? "Successfully created category" : "Category failed to create",
-                            timeout: 2500,
-                            theme: success ? "success" : "error",
-                        });
-                        success && history.push(`/categories/edit/${response.data.id}`);
-                        //if(formik.values.attributes.length>1)
-                            addAttributes(response.data.id)
-                    })
-                );
-            }
-        },
-    });
+    function submitCategory(values){
+        console.log(values)
+        if (categoryId) {
+            dispatch(
+                CategoryActions.updateCategory(categoryId, values, success => {
+                    createSnackbar({
+                        message: success ? "Successfully Updated Category" : "Category failed to Update",
+                        timeout: 2500,
+                        theme: success ? "success" : "error",
+                    });
+                    if(values.attributes.length>0)
+                        updateAttributes(values)
+                })
+            );
+        } else {
+            dispatch(
+                CategoryActions.addCategory(values, (success, response) => {
+                    createSnackbar({
+                        message: success ? "Successfully created category" : "Category failed to create",
+                        timeout: 2500,
+                        theme: success ? "success" : "error",
+                    });
+                    success && history.push(`/categories/edit/${response.data.id}`);
+                    if(values.attributes.length>0)
+                        addAttributes(values, response.data.id)
+                })
+            );
+        }
+    }
 
-    function addAttributes(cat_id){
-        formik.values.attributes.forEach(attr => attr.categoryId = cat_id)
+    function addAttributes(values, cat_id){
+        values.attributes.forEach(attr => attr.categoryId = cat_id)
         dispatch(
-            AttributeActions.addAttributes(formik.values.attributes, (success, response) => {
+            AttributeActions.addAttributes(values.attributes, (success, response) => {
                 window.location.reload()
             })
         );
     }
 
-    addNewAttributeField(0, true)
+    function updateAttributes(values){
+        let attributesToAdd = []
+        values.attributes.forEach(attr => {
+            if(attr.id === -1){
+                attributesToAdd.push(attr)
+            }
+            else{
+                dispatch(
+                    AttributeActions.updateAttribute(attr, (success, response) => {
+                        //window.location.reload()
+                    })
+                )
+            }
+        })
+        attributesToAdd.forEach(attr => attr.categoryId = categoryId)
+        dispatch(
+            AttributeActions.addAttributes(attributesToAdd, (success, response) => {
+                //window.location.reload()
+            })
+        );
+    }
 
-    function addNewAttributeField(i, initial){
-        if(attributesAndTextFields.attributes.length === attributesAndTextFields.textFields.length)
-            return
-        var temp = []
-        temp.push(
-            <TextField
-                placeholder={'Name'}
-                className={`col-4`}
-                name={`attributes[${i}].name'`}
-                label="Attribute name"
-                type="name"
-                value={formik.values.attributes[i]['name']}
-                onChange={formik.handleChange(`attributes[${i}].name'`)}
-            />
-        )
-        temp.push(
-            <TextField
-                placeholder={'Suffix'}
-                className={'col-4'}
-                name={"attributes[" + i + "].suffix"}
-                label="Attribute suffix"
-                type="name"
-                value={formik.values.attributes[i].suffix}
-                onChange={formik.handleChange}
-            />
-        )
-        temp.push(
-            <FormControl className={'col-3'}>
-                <InputLabel>Numeric</InputLabel>
-                <Select
-                    name={"attributes[" + i + "].isNumeric"}
-                    value={formik.values.attributes[i].isNumeric}
-                    label="Age"
-                    onChange={formik.handleChange}
-                >
-                    <MenuItem value={true}>True</MenuItem>
-                    <MenuItem value={false}>False</MenuItem>
-                </Select>
-            </FormControl>
-        )
-        temp.push(
-            <IconButton aria-label="add"
-                        className={'col-1'}
-                        onClick={() => addNewAttributeField(attributesAndTextFields.attributes.length, false)}
-            >
-                <AddCircleOutlineIcon />
-            </IconButton>
-        )
-        let prevState = {...attributesAndTextFields}
-        if(!initial) {
-            prevState.attributes = [...prevState.attributes, {
-                id: -1,
-                name: "",
-                suffix: "",
-                categoryId: -1,
-                isNumeric: false
-            }]
-        }
-        prevState.textFields = [...prevState.textFields, temp]
-        setAttributesAndTextFields(prevState)
+    function deleteAttribute(id){
+        dispatch(
+            AttributeActions.deleteAttribute(id)
+        );
+        createSnackbar({
+            message: "Attribute deleted!",
+            timeout: 2500,
+            theme: "success"
+        });
     }
 
     return (
@@ -186,23 +157,98 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
             <h3>
                 {Boolean(categoryId) ? 'Edit Category' : 'Create Category'}
             </h3>
-            <form className={`text-center pt-4`} onSubmit={formik.handleSubmit}>
+            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={submitCategory} innerRef = {formikRef}>
+            {({errors, values, touched, setValues, handleChange}) => (
+            <Form className={`text-center pt-4`}>
                 <TextField
                     className={``}
                     fullWidth
-                    id="name"
-                    name="name"
+                    name={`name`}
                     label="Category name"
                     type="name"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    error={formik.touched.name && Boolean(formik.errors.name)}
-                    helperText={formik.touched.name && formik.errors.name}
+                    onChange={handleChange}
+                    value={values.name}
+                    error={touched.name && Boolean(errors.name)}
+                    helperText={touched.name && errors.name}
                 />
-                <h3 className={'text-start pt-4 pb-1'}>
-                    {"Attributes"}
-                </h3>
-                {attributesAndTextFields.textFields}
+                <div className={'row'}>
+                    <h3 className={'text-start pt-4 pb-1 col-6'}>
+                        {"Attributes"}
+                    </h3>
+                    <div className={'col-4'}/>
+                    <Field>
+                        {({ field }) => (
+                            <div className={"col-2 pt-2"}>
+                                <IconButton aria-label="add"
+                                            className={''}
+                                            onClick={e => onChangeAttribute(e, field, values, setValues, "add")}
+                                >
+                                    <AddCircleOutlineIcon />
+                                </IconButton>
+                            </div>
+                        )}
+                    </Field>
+                </div>
+                <FieldArray name="attributes">
+                    {() => (values.attributes.map((attribute, i) => {
+                        return (
+                            <div key={i} className="list-group list-group-flush">
+                                <div className="list-group-item">
+                                    <div className="form-row row">
+                                        <div className="form-group col-4">
+                                            <TextField
+                                                className={``}
+                                                fullWidth
+                                                name={`attributes.${i}.name`}
+                                                label="Attribute name"
+                                                type="name"
+                                                onChange={handleChange}
+                                                value={values.attributes[i].name}
+                                            />
+                                        </div>
+                                        <div className="form-group col-4">
+                                            <TextField
+                                                className={``}
+                                                fullWidth
+                                                name={`attributes.${i}.suffix`}
+                                                label="Attribute suffix"
+                                                type="name"
+                                                onChange={handleChange}
+                                                value={values.attributes[i].suffix}
+                                            />
+                                        </div>
+                                        <div className="form-group col-3">
+                                            <label>Numeric</label>
+                                            <br/>
+                                            <Select
+                                                name={`attributes.${i}.numeric`}
+                                                onChange={handleChange}
+                                                value={values.attributes[i].numeric}
+                                            >
+                                                <MenuItem value={true}>True</MenuItem>
+                                                <MenuItem value={false}>False</MenuItem>
+                                            </Select>
+                                        </div>
+                                        <div className={"form-group col-1"}>
+                                            <Field>
+                                                {({ field }) => (
+                                                    <div className={"col-2 pt-2"}>
+                                                        <IconButton aria-label="delete"
+                                                            className={''}
+                                                            onClick={e => onChangeAttribute(e, field, values, setValues, "delete", i)}
+                                                            >
+                                                        <RemoveCircleOutline />
+                                                    </IconButton>
+                                                    </div>
+                                                )}
+                                            </Field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    }))}
+                </FieldArray>
                 <div className={`pt-3 float-left`}>
                     <Button
                         color="primary"
@@ -218,7 +264,9 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                         Exit
                     </Button>
                 </div>
-            </form>
+            </Form>
+                )}
+            </Formik>
         </div>
     );
 });
