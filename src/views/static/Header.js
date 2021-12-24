@@ -34,6 +34,13 @@ const Header = () => {
                     Home
                 </Link>
                 <ul className={`navbar-nav`}>
+                    <Link
+                        to="/products"
+                        replace={false}
+                        className={`nav-link nav-item shadow-outer ${activePath('/products')}`}
+                    >
+                        Products
+                    </Link>
                     {role === Roles.ADMIN ?
                         (
                             <React.Fragment>

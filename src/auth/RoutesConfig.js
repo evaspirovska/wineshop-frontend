@@ -11,6 +11,7 @@ import ChangePasswordForm from "../views/user/ChangePasswordForm";
 import ForgotPasswordForm from "../views/user/ForgotPasswordForm";
 import InvalidTokenView from "../views/user/InvalidTokenView";
 import SentEmailView from "../views/user/SentEmailView";
+import ProductView from "../views/products/ProductView";
 
 export const PrivateRoutes = [
     {
@@ -106,7 +107,16 @@ export const PublicRoutes = [
             Roles.ADMIN,
             Roles.USER
         ]
-    }
+    },
+    {
+        component: ProductView,
+        path: '/products',
+        title: 'Products',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
 ];
 
 const AllRoutes = [...PrivateRoutes, ...PublicRoutes];
