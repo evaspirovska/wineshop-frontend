@@ -8,13 +8,16 @@ import {
 } from '../actionTypes';
 
 export const ProductActions = {
-    fetchProduct: id => dispatch => {
+    fetchProduct: (id, callback) => dispatch => {
         axios.get(`/products/${id}`).then(resp => {
             dispatch({
                 type: FETCH_PRODUCT,
                 product: resp.data,
             });
-        });
+            callback(true, resp);
+        }).catch((error) => {
+            callback(false, error);
+        })
     },
     fetchAllProducts: () => dispatch => {
         axios.get("/products").then(resp => {
@@ -31,5 +34,27 @@ export const ProductActions = {
                 productId: id,
             });
         });
+    },
+    addProduct: (product, callback) => dispatch => {
+        axios.post(`/products/create`, product).then((response) => {
+            dispatch({
+                type: ADD_PRODUCT,
+                product: response.data,
+            });
+            callback(true, response);
+        }).catch((error) => {
+            callback(false, error);
+        })
+    },
+    updateProduct: (product, callback) => dispatch => {
+        axios.put(`/products/update`, product).then((response) => {
+            dispatch({
+                type: UPDATE_PRODUCT,
+                product: response.data,
+            });
+            callback(true, response);
+        }).catch((error) => {
+            callback(false, error);
+        })
     },
 }

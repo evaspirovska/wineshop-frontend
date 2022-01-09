@@ -1,4 +1,5 @@
 import Button from '@material-ui/core/Button';
+import {Link} from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -18,7 +19,9 @@ const AdminPanel = wrapComponent(function ({createSnackbar}) {
     const categories = useSelector(state => state.category.categories);
 
     useEffect(() => {
-        dispatch(CategoryActions.fetchAllCategories());
+        dispatch(CategoryActions.fetchAllCategories((success, response) => {
+
+        }));
     }, []);
 
     const handleCategoryDelete = id => {
@@ -28,9 +31,13 @@ const AdminPanel = wrapComponent(function ({createSnackbar}) {
     return (
         <div className={`container p-5`}>
             <div>
-                <div className={`btn btn-success float-right`}>
-                    <a href={`/categories/add`} className={`text-white text-decoration-none`}>ADD CATEGORY</a>
-                </div>
+                <Button component={Link}
+                        to={'/categories/add'}
+                        variant="contained" color="primary"
+                        className={`text-white text-decoration-none float-right`}
+                >
+                    ADD CATEGORY
+                </Button>
                 <h3>
                     Categories
                 </h3>
@@ -74,6 +81,7 @@ const AdminPanel = wrapComponent(function ({createSnackbar}) {
                         </Table>
                     </TableContainer>
                 </div>
+
             </div>
         </div>
     );

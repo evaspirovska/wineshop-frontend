@@ -8,12 +8,15 @@ import {
 } from "../actionTypes";
 
 export const CategoryActions = {
-    fetchAllCategories: () => dispatch => {
+    fetchAllCategories: (callback) => dispatch => {
         axios.get("/categories").then(response => {
             dispatch({
                 type: FETCH_CATEGORIES,
                 categories: response.data,
             });
+            callback(true, response)
+        }).catch((error) => {
+            callback(false, error)
         });
     },
     fetchCategory: (id, callback) => dispatch => {
