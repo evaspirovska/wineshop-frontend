@@ -29,6 +29,17 @@ export const ProductReducer = (state = initState, action) => {
                 ...state,
                 products: sortElementsByDateCreated(state.products.filter(product => product.id !== action.productId)),
             };
+        case ADD_PRODUCT:
+            return {
+                ...state,
+                products: sortElementsByDateCreated([...state.products, action.product]),
+            }
+        case UPDATE_PRODUCT:
+            let products = state.products.filter(product => product.id !== action.product.id);
+            return {
+                ...state,
+                products: sortElementsByDateCreated([action.product, ...products]),
+            };
         default:
             return state;
     }
