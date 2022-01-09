@@ -55,9 +55,9 @@ const ProductView = () => {
                 <div className={`col-md-9`}>
                     <div className={`row`}>
                         {products && products.map((product, i) => (
-                            // TODO: Style the cards
                             <div className={`col-md-4 col-sm-6`}>
                                 <div className={`card card-width`}>
+                                    {/*TODO Marko: Tuka treba da stoi slikata*/}
                                     <img src="" className={`card-img-top`} alt=""/>
                                     <div className={'card-body'}>
                                         <h5 className={`card-title`}>{product.productTitle}</h5>
