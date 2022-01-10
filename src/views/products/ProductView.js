@@ -4,13 +4,17 @@ import {ProductActions} from "../../redux/actions/productActions";
 import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Roles from "../../auth/Roles";
+import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
+import {wrapComponent} from "react-snackbar-alert";
+import {useHistory} from "react-router";
 
-const ProductView = () => {
+const ProductView = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
     const products = useSelector(state => state.product.products);
     const auth = useSelector(state => state.auth.currentUser);
+    const history = useHistory();
 
-    const [role, setRole] = useState(Roles.USER);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         if (auth) {
@@ -24,6 +28,27 @@ const ProductView = () => {
 
     const handleProductDelete = id => {
         dispatch(ProductActions.deleteProduct(id));
+    };
+
+    const handleAddToCart = id => {
+        if (Boolean(role)) {
+            dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
+                'productId': id,
+                'quantity': 1,
+            }, (success, response) => {
+                createSnackbar({
+                    message: success ? 'Successfully added product to cart.' : 'Failed to add product to cart.',
+                    timeout: 2500,
+                    theme: success ? 'success' : 'error'
+                });
+            }))
+        } else {
+            createSnackbar({
+                message: 'Sorry, you must be signed in in order to see your shopping cart.',
+                timeout: 3000,
+                theme: 'error'
+            });
+        }
     };
 
     return (
@@ -77,6 +102,14 @@ const ProductView = () => {
                                                 :
                                                 null
                                         }
+                                        <div>
+                                            <button type="button"
+                                                    onClick={() => handleAddToCart(product.id)}
+                                                    className={`btn btn-success`}
+                                            >
+                                                Add to cart
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <br/>
@@ -87,6 +120,6 @@ const ProductView = () => {
             </div>
         </div>
     );
-}
+});
 
 export default ProductView;
