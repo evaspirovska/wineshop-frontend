@@ -4,18 +4,22 @@ import {useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import Roles from '../../auth/Roles';
 import {AuthButton} from '../../components/AuthButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/fontawesome-free-solid';
 
 const Header = () => {
     let location = useLocation();
     const auth = useSelector(state => state.auth.currentUser);
 
     const [path, setPath] = useState(location);
-    const [role, setRole] = useState(Roles.USER);
+    const [role, setRole] = useState(null);
+    const [username, setUsername] = useState(null);
 
     useEffect(() => {
         setPath(location.pathname.split('/')[1]);
         if (auth) {
             setRole(auth.role);
+            setUsername(auth.username);
         }
     }, [location, auth]);
 
@@ -41,16 +45,26 @@ const Header = () => {
                     >
                         Products
                     </Link>
+                    {
+                        role === Roles.ADMIN || role === Roles.USER ?
+                            (
+                                <React.Fragment>
+                                    <Link
+                                        to={`/shopping-cart/${username}`}
+                                        replace={false}
+                                        className={`nav-link nav-item shadow-outer 
+                                        ${activePath(`/shopping-cart/${username}`)}`}
+                                    >
+                                        <FontAwesomeIcon size={`lg`} icon={faShoppingCart} /> Cart
+                                    </Link>
+                                </React.Fragment>
+                            )
+                            :
+                            null
+                    }
                     {role === Roles.ADMIN ?
                         (
                             <React.Fragment>
-                                <Link
-                                    to="/users"
-                                    replace={false}
-                                    className={`nav-link nav-item shadow-outer ${activePath('users')}`}
-                                >
-                                    Users
-                                </Link>
                                 <Link
                                     to="/admin"
                                     replace={false}
