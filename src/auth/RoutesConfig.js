@@ -13,6 +13,7 @@ import ProductForm from "../views/products/ProductForm";
 import InvalidTokenView from "../views/user/InvalidTokenView";
 import SentEmailView from "../views/user/SentEmailView";
 import ProductView from "../views/products/ProductView";
+import ShoppingCartView from "../views/shopping_cart/ShoppingCartView";
 
 export const PrivateRoutes = [
     {
@@ -131,6 +132,15 @@ export const PublicRoutes = [
         component: ProductView,
         path: '/products',
         title: 'Products',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: ShoppingCartView,
+        path: '/shopping-cart/:username',
+        title: 'Shopping Cart',
         permission: [
             Roles.ADMIN,
             Roles.USER
