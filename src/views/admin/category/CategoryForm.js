@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Form, Field, FieldArray, Formik, useFormikContext} from "formik";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -12,6 +12,7 @@ import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
+import {ProductActions} from "../../../redux/actions/productActions";
 
 const validationSchema = yup.object({
     name: yup.string("Enter Category").required("Category is required")
@@ -22,6 +23,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
     const history = useHistory();
     const {categoryId} = useParams();
     const formikRef = useRef(null)
+    const [attributeIdsToRemove, setAttributeIdsToRemove] = useState([])
 
     const initialValues = {
         name: "",
@@ -30,7 +32,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
 
     function onChangeAttribute(e, field, values, setValues, action, i) {
         if(Boolean(categoryId) && action === "delete"){
-            deleteAttribute(values.attributes[i].id)
+            deleteAttribute(values.attributes[i].id, false)
         }
         const attributes = [...values.attributes];
         if(action === "add"){
@@ -81,8 +83,8 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
     }, []);
 
     function submitCategory(values){
-        console.log(values)
         if (categoryId) {
+            deleteAttribute(-1, true)
             dispatch(
                 CategoryActions.updateCategory(categoryId, values, success => {
                     createSnackbar({
@@ -141,15 +143,23 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
         );
     }
 
-    function deleteAttribute(id){
-        dispatch(
-            AttributeActions.deleteAttribute(id)
-        );
-        createSnackbar({
-            message: "Attribute deleted!",
-            timeout: 2500,
-            theme: "success"
-        });
+    function deleteAttribute(id, final){
+        if(final) {
+            let i=0;
+            function deleteCategoryAttribute(attr_id){
+                dispatch(
+                    AttributeActions.deleteAttribute(attr_id, (success, response) => {
+                        i++
+                        if(i<attributeIdsToRemove.length)
+                            deleteCategoryAttribute(attributeIdsToRemove[i])
+                    })
+                )
+            }
+            deleteCategoryAttribute(attributeIdsToRemove[i])
+        }
+        else{
+            setAttributeIdsToRemove([...attributeIdsToRemove, id])
+        }
     }
 
     return (
@@ -206,17 +216,6 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                                                 value={values.attributes[i].name}
                                             />
                                         </div>
-                                        <div className="form-group col-4">
-                                            <TextField
-                                                className={``}
-                                                fullWidth
-                                                name={`attributes.${i}.suffix`}
-                                                label="Attribute suffix"
-                                                type="name"
-                                                onChange={handleChange}
-                                                value={values.attributes[i].suffix}
-                                            />
-                                        </div>
                                         <div className="form-group col-3">
                                             <label>Numeric</label>
                                             <br/>
@@ -228,6 +227,17 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                                                 <MenuItem value={true}>True</MenuItem>
                                                 <MenuItem value={false}>False</MenuItem>
                                             </Select>
+                                        </div>
+                                        <div className="form-group col-4">
+                                            <TextField
+                                                className={``}
+                                                fullWidth
+                                                name={`attributes.${i}.suffix`}
+                                                label="Attribute suffix"
+                                                type="name"
+                                                onChange={handleChange}
+                                                value={values.attributes[i].suffix}
+                                            />
                                         </div>
                                         <div className={"form-group col-1"}>
                                             <Field>
