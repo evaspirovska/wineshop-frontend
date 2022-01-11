@@ -44,7 +44,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
             }))
         } else {
             createSnackbar({
-                message: 'Sorry, you must be signed in in order to see your shopping cart.',
+                message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
                 timeout: 3000,
                 theme: 'error'
             });
