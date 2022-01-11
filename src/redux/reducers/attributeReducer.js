@@ -27,10 +27,9 @@ export const AttributeReducer = (state = initialState, action) => {
                 attributes: [...prevAttributes, action.attribute],
             };
         case FETCH_ATTRIBUTES_BY_CATEGORY:
-            const prevAttributes2 = state.attributes.filter(attribute => attribute.id !== action.attribute.id);
             return {
                 ...state,
-                attributes: [...prevAttributes2, action.attributes],
+                attributes: action.attributes
             };
         case UPDATE_ATTRIBUTE:
             const attributes = state.attributes.filter(attribute => attribute.id !== action.attribute.id)

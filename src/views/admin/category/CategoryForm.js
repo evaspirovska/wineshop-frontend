@@ -66,7 +66,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                                     theme: 'error'
                                 });
                             }
-                        }, 1000)
+                        }, 0)
                     }))
                 } else {
                     createSnackbar({
@@ -114,7 +114,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
         values.attributes.forEach(attr => attr.categoryId = cat_id)
         dispatch(
             AttributeActions.addAttributes(values.attributes, (success, response) => {
-                window.location.reload()
+                //window.location.reload()
             })
         );
     }
