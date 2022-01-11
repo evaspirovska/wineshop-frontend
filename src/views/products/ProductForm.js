@@ -26,6 +26,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
     const {productId} = useParams();
     const [categories, setCategories] = useState([]);
     const [attributes, setAttributes] = useState([]);
+    const [areThereAttributes, setAreThereAttributes] = useState(true);
     const [imageIdsToRemove, setImageIdsToRemove] = useState([]);
     const [images, setImages] = useState({
         images: [],
@@ -86,6 +87,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
             if (success) {
                 formikRef.current.setFieldValue("attributeIdAndValueMap", {});
                 setAttributes(response.data);
+                setAreThereAttributes(response.data.length > 0)
             } else {
                 if (response.data) {
                     alert(response.data.message);
@@ -357,8 +359,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                             }))}
                         </FieldArray>
                         {
-                            //todo: napravi ushte nekoja promena za ako nema odbrano kategorija da ne se pokazhuva ova
-                            attributes.length===0 ? "No attributes for this category." : null
+                            areThereAttributes ?  null : "No attributes for this category."
                         }
                         <div className={'row'}>
                             <h4>Images</h4>
@@ -374,23 +375,24 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                 <Button
                                 color="primary"
                                 variant="contained"
-                                type="submit"
-                            >
+                                type="submit">
                                 {productId ? "Edit" : "Create"}
-                            </Button>}
-                            {productId ? <Button
+                            </Button>
+                            }
+                            {productId && !backendWorking ? <Button
                                 color="secondary"
                                 variant="contained"
                                 onClick={() => deleteProduct(productId)}
                             >
                                 Delete Product
                             </Button> : null}
-                            <Button
+                            {backendWorking ? null :
+                                <Button
                                 color="primary"
                                 href={'/products'}
                             >
                                 Exit
-                            </Button>
+                            </Button> }
                         </div>
                     </div>
                 </Form>

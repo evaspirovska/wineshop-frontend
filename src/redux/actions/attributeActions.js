@@ -75,12 +75,11 @@ export const AttributeActions = {
             callback(false, error);
         })
     },
-    deleteAttribute: id => dispatch => {
-        axios.delete(`/attributes/delete/${id}`).then(() => {
-            dispatch({
-                type: DELETE_ATTRIBUTE,
-                id: id
-            })
+    deleteAttribute: (id, callback) => dispatch => {
+        axios.delete(`/attributes/delete/${id}`).then(response => {
+            callback(true, response);
+        }).catch((error) => {
+            callback(false, error);
         })
     }
 }
