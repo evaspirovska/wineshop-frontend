@@ -4,7 +4,7 @@ import {
     FETCH_PRODUCTS,
     ADD_PRODUCT,
     UPDATE_PRODUCT,
-    DELETE_PRODUCT,
+    DELETE_PRODUCT, ADD_NEW_PRODUCT_IMAGE,
 } from '../actionTypes';
 
 export const ProductActions = {
@@ -57,4 +57,39 @@ export const ProductActions = {
             callback(false, error);
         })
     },
+    addNewProductImage: (product_id, image, callback) => dispatch => {
+        var formData = new FormData()
+        formData.append('image', image);
+        axios.put('/products/img/' + product_id, formData).then(response => {
+            callback(true, response)
+        }).catch((error) => {
+            callback(false, error);
+        })
+    },
+    setMainProductImage: (product_id, main_image_id) => dispatch => {
+        var formData = new FormData();
+        formData.append('productId', product_id)
+        formData.append('mainImageId', main_image_id)
+        axios.put('/products/img', formData);
+    },
+    addAllProductImages: (product_id, main_image_id, images, callback) => dispatch => {
+        var formData = new FormData();
+        formData.append('productId', product_id)
+        formData.append('mainImageId', main_image_id)
+        for(let i=0; i<images.length; i++){
+            formData.append('images', images[i])
+        }
+        axios.post('/products/img', formData).then(response => {
+            callback(true, response)
+        }).catch((error) => {
+            callback(false, error);
+        })
+    },
+    deleteProductImage: (product_id, image_id, callback) => dispatch => {
+        axios.delete('/products/img/delete/' + product_id + "/" + image_id).then(response => {
+            callback(true, response)
+        }).catch((error) => {
+            callback(false, error);
+        })
+    }
 }

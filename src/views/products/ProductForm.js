@@ -9,6 +9,9 @@ import {wrapComponent} from "react-snackbar-alert";
 import {useHistory, useParams} from "react-router";
 import {ProductActions} from "../../redux/actions/productActions";
 import {CategoryActions} from "../../redux/actions/categoryActions";
+import {AttributeActions} from "../../redux/actions/attributeActions";
+import {CircularProgress} from "@material-ui/core";
+import ImageUploadComponent from "../../utils/imageUploadComponent";
 
 const validationSchema = yup.object({
     productTitle: yup.string("Enter product title").required("Product title is required"),
@@ -22,6 +25,14 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
     const history = useHistory();
     const {productId} = useParams();
     const [categories, setCategories] = useState([]);
+    const [attributes, setAttributes] = useState([]);
+    const [imageIdsToRemove, setImageIdsToRemove] = useState([]);
+    const [images, setImages] = useState({
+        images: [],
+        mainImage: 0
+    });
+    const [validateMainImage, setValidateMainImage] = useState(false)
+    const [backendWorking, setBackendWorking] = useState(false)
     const formikRef = useRef(null)
 
     let initialValues = {
@@ -30,7 +41,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
         productTitle: '',
         productDescriptionHTML: '',
         priceInMKD: '',
-        valueForProductAttribute: [],
+        attributeIdAndValueMap: {},
     }
 
     useEffect(() => {
@@ -42,7 +53,14 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                     formikRef.current.setFieldValue("productTitle", response.data.productTitle);
                     formikRef.current.setFieldValue("productDescriptionHTML", response.data.productDescriptionHTML);
                     formikRef.current.setFieldValue("priceInMKD", response.data.priceInMKD);
-                    formikRef.current.setFieldValue("valueForProductAttribute", response.data.valueForProductAttribute);
+                    formikRef.current.setFieldValue("attributeIdAndValueMap", response.data.attributeIdAndValueMap);
+                    dispatch(AttributeActions.fetchAttributesByCategory(response.data.categoryId, (success, response) => {
+                        if (success) {
+                            setAttributes(response.data);
+                        } else {
+                            alert("Error while fetching attributes.");
+                        }
+                    }))
                 } else {
                     if (response.data.message) {
                         alert(response.data.message);
@@ -60,9 +78,66 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                 alert("Error while fetching categories.");
             }
         }));
+
     }, []);
 
+    function onChangeCategory(categoryId){
+        dispatch(AttributeActions.fetchAttributesByCategory(categoryId, (success, response) => {
+            if (success) {
+                formikRef.current.setFieldValue("attributeIdAndValueMap", {});
+                setAttributes(response.data);
+            } else {
+                if (response.data) {
+                    alert(response.data.message);
+                } else {
+                    alert("Attribute fetching error!");
+                }
+                history.push("/products");
+            }
+        }))
+    }
+
+    function deleteProduct(productId){
+        if(window.confirm("Are you sure you want to delete this product?")){
+            dispatch(ProductActions.deleteProduct(productId))
+            history.push("/products");
+            window.location.reload();
+        }
+    }
+
+    function handleImagesChange(imageState){
+        setImages(imageState)
+    }
+
+    function removeImageRemotely(image_id){
+        setImageIdsToRemove([...imageIdsToRemove, image_id])
+    }
+
     function onSubmit(values) {
+        var tempImgValuesArray = []
+        for(let i=0; i<images.images.length; i++)
+            tempImgValuesArray.push(i+1)
+        if(images.images.length > 0 && !tempImgValuesArray.includes(images.mainImage)){
+            setValidateMainImage(true)
+            return;
+        }
+        else{
+            setValidateMainImage(false)
+        }
+        setBackendWorking(true)
+        if(Boolean(productId)){
+            let i=0;
+            function deleteProductImage(imageId){
+                dispatch(
+                    ProductActions.deleteProductImage(productId, imageId, (success, response) => {
+                        i++
+                        if(i<imageIdsToRemove.length)
+                            deleteProductImage(imageIdsToRemove[i])
+                    })
+                )
+            }
+            deleteProductImage(imageIdsToRemove[i])
+        }
         Boolean(productId) ? dispatch(
             ProductActions.updateProduct({
                 id: values.id,
@@ -70,13 +145,78 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                 productTitle: values.productTitle,
                 productDescriptionHTML: values.productDescriptionHTML,
                 priceInMKD: values.priceInMKD,
+                attributeIdAndValueMap: values.attributeIdAndValueMap
             }, (success, response) => {
-                createSnackbar({
-                    message: success ? 'Successfully Updated Product' : 'Product failed to Update',
-                    timeout: 2500,
-                    theme: success ? 'success' : 'error'
-                });
-                success && history.push(`/products/edit/${response.data.id}`);
+                if(success) {
+                    if (images.images.length > 0) {
+                        setBackendWorking(true);
+                        var imagesToUpload = []
+                        for(let i=0; i<images.images.length; i++){
+                            if(images.images[i] instanceof File){
+                                imagesToUpload.push(images.images[i])
+                            }
+                        }
+                        if(imagesToUpload.length === 0){
+                            createSnackbar({
+                                message: success ? 'Successfully Updated Product' : 'Product failed to Update',
+                                timeout: 2500,
+                                theme: success ? 'success' : 'error'
+                            });
+                            setBackendWorking(false)
+                        }
+                        else{
+                            let i=0;
+                            function uploadNewImage(imageToUpload){
+                                dispatch(
+                                    ProductActions.addNewProductImage(productId, imageToUpload, (success2, response) => {
+                                        if(!success2){
+                                            createSnackbar({
+                                                message: 'Image failed to Update',
+                                                timeout: 2500,
+                                                theme: 'error'
+                                            });
+                                        }
+                                        i++
+                                        if(i<imagesToUpload.length){
+                                            uploadNewImage(imagesToUpload[i])
+                                        }
+                                        else{
+                                            createSnackbar({
+                                                message: success2 ? 'Successfully Updated Product' : 'Product failed to Update',
+                                                timeout: 2500,
+                                                theme: success2 ? 'success' : 'error'
+                                            });
+                                            setBackendWorking(false)
+                                        }
+                                    })
+                                )
+                            }
+                            uploadNewImage(imagesToUpload[i])
+                        }
+                        if(images.images[images.mainImage-1] instanceof File){
+                            createSnackbar({
+                                message: 'Please re-select your main product image after images have finished uploading',
+                                timeout: 7000,
+                                theme: 'warning'
+                            });
+                        }
+                        else{
+                            const parts = images.images[images.mainImage-1].split("/")
+                            dispatch(
+                                ProductActions.setMainProductImage(productId, Number(parts[parts.length - 1].replace(".jpg", "")))
+                            )
+                        }
+                        success && history.push(`/products/edit/${response.data.id}`);
+                    } else {
+                        createSnackbar({
+                            message: success ? 'Successfully Updated Product' : 'Product failed to Update',
+                            timeout: 2500,
+                            theme: success ? 'success' : 'error'
+                        });
+                        setBackendWorking(false)
+                        success && history.push(`/products/edit/${response.data.id}`);
+                    }
+                }
             })
         ) : dispatch(
             ProductActions.addProduct({
@@ -84,13 +224,31 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                 productTitle: values.productTitle,
                 productDescriptionHTML: values.productDescriptionHTML,
                 priceInMKD: values.priceInMKD,
+                attributeIdAndValueMap: values.attributeIdAndValueMap
             }, (success, response) => {
-                createSnackbar({
-                    message: success ? 'Successfully Created Product' : 'Product failed to Create',
-                    timeout: 2500,
-                    theme: success ? 'success' : 'error'
-                });
-                success && history.push(`/products/edit/${response.data.id}`);
+                if(success) {
+                    if (images.images.length > 0) {
+                        dispatch(
+                            ProductActions.addAllProductImages(response.data.id, images.mainImage, images.images, (success2, response2) => {
+                                createSnackbar({
+                                    message: success2 ? 'Successfully Created Product' : 'Product failed to Create',
+                                    timeout: 2500,
+                                    theme: success2 ? 'success' : 'error'
+                                });
+                                setBackendWorking(false)
+                                success2 && history.push(`/products/edit/${response.data.id}`);
+                            })
+                        )
+                    } else {
+                        createSnackbar({
+                            message: success ? 'Successfully Created Product' : 'Product failed to Create',
+                            timeout: 2500,
+                            theme: success ? 'success' : 'error'
+                        });
+                        setBackendWorking(false)
+                        success && history.push(`/products/edit/${response.data.id}`);
+                    }
+                }
             })
         );
     }
@@ -146,7 +304,10 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                 <InputLabel id="label-category">Category</InputLabel>
                                 <Select fullWidth
                                         id='categoryId' name='categoryId'
-                                        onChange={handleChange}
+                                        onChange={change => {
+                                            values.categoryId = change.target.value;
+                                            onChangeCategory(change.target.value);
+                                        }}
                                         value={values.categoryId}
                                 >
                                     {
@@ -164,21 +325,73 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                 ) : null}
                             </div>
                         </div>
-                    </div>
-                    <div className={`pt-3 float-left`}>
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            type="submit"
-                        >
-                            {productId ? "Edit" : "Create"}
-                        </Button>
-                        <Button
-                            color="primary"
-                            href={'/products'}
-                        >
-                            Exit
-                        </Button>
+                        <div className={'row'}>
+                            <h4>Attributes</h4>
+                        </div>
+                        <FieldArray name="attributes">
+                            {() => (attributes.map((attribute, i) => {
+                                return (
+                                    <div key={i} className="list-group list-group-flush">
+                                        <div className="list-group-item row">
+                                            <div className="form-row row justify-content-between">
+                                                <div className="fs-4 col-auto p-0">
+                                                    {attributes[i].name + ':'}
+                                                </div>
+                                                <div className="form-group col-auto">
+                                                    <TextField
+                                                        className={``}
+                                                        fullWidth
+                                                        name={`attributeIdAndValueMap[${attribute.id}]`}
+                                                        type={attributes[i].numeric ? "number" : "text"}
+                                                        onChange={handleChange}
+                                                        value={values.attributeIdAndValueMap[attribute.id]}
+                                                    />
+                                                </div>
+                                                <div className="fs-4 col-auto p-0">
+                                                    {attributes[i].suffix}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }))}
+                        </FieldArray>
+                        {
+                            //todo: napravi ushte nekoja promena za ako nema odbrano kategorija da ne se pokazhuva ova
+                            attributes.length===0 ? "No attributes for this category." : null
+                        }
+                        <div className={'row'}>
+                            <h4>Images</h4>
+                        </div>
+                        <ImageUploadComponent
+                            handleImagesChange={handleImagesChange}
+                            productId={productId ? productId : -1}
+                            removeImageRemotely={removeImageRemotely}
+                        />
+                        {validateMainImage ? <div className={"text-danger"}>Please select the main product image</div> : null}
+                        <div className={`pt-3 float-left`}>
+                            {backendWorking ? <CircularProgress /> :
+                                <Button
+                                color="primary"
+                                variant="contained"
+                                type="submit"
+                            >
+                                {productId ? "Edit" : "Create"}
+                            </Button>}
+                            {productId ? <Button
+                                color="secondary"
+                                variant="contained"
+                                onClick={() => deleteProduct(productId)}
+                            >
+                                Delete Product
+                            </Button> : null}
+                            <Button
+                                color="primary"
+                                href={'/products'}
+                            >
+                                Exit
+                            </Button>
+                        </div>
                     </div>
                 </Form>
             )}

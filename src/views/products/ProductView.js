@@ -57,8 +57,7 @@ const ProductView = () => {
                         {products && products.map((product, i) => (
                             <div className={`col-md-4 col-sm-6`}>
                                 <div className={`card card-width`}>
-                                    {/*TODO Marko: Tuka treba da stoi slikata*/}
-                                    <img src="" className={`card-img-top`} alt=""/>
+                                    <img src={'http://localhost:8080/api/products/images/' + product.id + '/m/main'} className={`card-img-top`} alt=""/>
                                     <div className={'card-body'}>
                                         <h5 className={`card-title`}>{product.productTitle}</h5>
                                         <p className={`card-text`}>{product.productDescriptionHTML}</p>
