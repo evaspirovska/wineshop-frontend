@@ -101,14 +101,14 @@ class ImageUploadComponent extends Component {
                             <Button
                                 variant="contained"
                                 size={"small"}
-                                className="position-absolute bg-danger"
+                                className="position-absolute bg-danger p-0"
                                 onClick={() => this.removeImage(i)}
                             >X</Button>
-                            <span className={'m-5'}/>
+                            <br/>
                             <Radio
                                 checked={this.state.mainImage === i+1}
                                 size={"small"}
-                                className={"position-absolute bottom-0 end-0 bg-dark text-white"}
+                                className={"position-absolute bottom-0 end-0 bg-dark text-white ms-5 mt-5"}
                                 onChange={this.changeMainImage}
                                 value={i+1}
                                 name="mainImage"/>
