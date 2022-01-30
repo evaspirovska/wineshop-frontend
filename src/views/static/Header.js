@@ -57,6 +57,14 @@ const Header = () => {
                                     >
                                         <FontAwesomeIcon size={`lg`} icon={faShoppingCart} /> Cart
                                     </Link>
+                                    <Link
+                                        to={`/my-orders/${username}`}
+                                        replace={false}
+                                        className={`nav-link nav-item shadow-outer 
+                                        ${activePath(`/my-orders/${username}`)}`}
+                                    >
+                                        My Orders
+                                    </Link>
                                 </React.Fragment>
                             )
                             :

@@ -26,6 +26,7 @@
     "js-file-download": "^0.4.12",
     "react": "^17.0.1",
     "react-copy-to-clipboard": "^5.0.3",
+    "react-country-region-selector": "^3.4.0",
     "react-dom": "^17.0.1",
     "react-drag-sortable": "^1.0.6",
     "react-jwt": "^1.1.2",

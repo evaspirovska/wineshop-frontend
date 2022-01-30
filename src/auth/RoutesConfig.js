@@ -14,6 +14,8 @@ import InvalidTokenView from "../views/user/InvalidTokenView";
 import SentEmailView from "../views/user/SentEmailView";
 import ProductView from "../views/products/ProductView";
 import ShoppingCartView from "../views/shopping_cart/ShoppingCartView";
+import OrderForm from "../views/orders/OrderForm";
+import MyOrders from "../views/orders/MyOrders";
 
 export const PrivateRoutes = [
     {
@@ -141,6 +143,24 @@ export const PublicRoutes = [
         component: ShoppingCartView,
         path: '/shopping-cart/:username',
         title: 'Shopping Cart',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: OrderForm,
+        path: '/order-form/:username',
+        title: 'Order Form',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: MyOrders,
+        path: '/my-orders/:username',
+        title: 'Order Form',
         permission: [
             Roles.ADMIN,
             Roles.USER
