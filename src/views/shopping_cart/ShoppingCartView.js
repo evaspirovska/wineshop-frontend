@@ -81,8 +81,6 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                             <TableCell align="left"/>
                             <TableCell align="left">Product</TableCell>
                             <TableCell align="left">Price</TableCell>
-                            <TableCell align="left">Discount</TableCell>
-                            <TableCell align="left">Discounted Price</TableCell>
                             <TableCell align="left">Quantity</TableCell>
                             <TableCell align="left">Total price</TableCell>
                             <TableCell align="left"/>
@@ -91,17 +89,17 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                     <TableBody>
                         {products && products.map((product, i) => (
                             <TableRow key={product.id}>
-                                <TableCell component="th" scope="row" name="productInCartId" padding="none"
+                                <TableCell component="th" scope="row" padding="none"
                                            align="center">
-                                    {i + 1}
+                                    <img src={`http://localhost:8080/api/products/images/${product.productId}/s/main`}
+                                         alt={`Product IMG`}
+                                    />
                                 </TableCell>
                                 <TableCell align="left">{product.productTitle}</TableCell>
                                 <TableCell align="left">{product.priceInMKD}</TableCell>
-                                <TableCell align="left">%</TableCell>
-                                <TableCell align="left">Discounted price</TableCell>
                                 <TableCell align="left">{product.quantity}</TableCell>
                                 <TableCell align="left">
-                                    {product.priceInMKD * product.quantity}
+                                    {product.priceInMKD * product.quantity} MKD
                                 </TableCell>
                                 <TableCell align="left">
                                     <Button onClick={() => {
@@ -120,10 +118,8 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                             <TableCell/>
                             <TableCell/>
                             <TableCell/>
-                            <TableCell/>
-                            <TableCell/>
                             <TableCell align="left">
-                                {products && calculateTotalPrice(products)}
+                                {products && calculateTotalPrice(products)} MKD
                             </TableCell>
                             <TableCell/>
                         </TableRow>

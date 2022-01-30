@@ -27,7 +27,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
 
     useEffect(() => {
         dispatch(ProductActions.fetchAllProducts((success, response) => {
-            if(Boolean(success)){
+            if (Boolean(success)) {
                 setProductsFetched(true)
             }
         }));
@@ -84,7 +84,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                         <h4>
                             Filter products
                         </h4>
-                        <ProductsFilterComponent products={products} />
+                        <ProductsFilterComponent products={products}/>
                     </div>
                     : null
                 }
@@ -92,7 +92,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                     <div className={`row`}>
                         {products && products.map((product, i) => (
                             <div className={`col-md-4 col-sm-6`}>
-                                <Card sx={{ maxWidth: 345 }}>
+                                <Card sx={{maxWidth: 345}}>
                                     <CardActionArea>
                                         <CardMedia
                                             component="img"
@@ -107,22 +107,33 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                             <Typography variant="body2" color="text.secondary">
                                                 {product.productDescriptionHTML}
                                             </Typography>
+                                            <Typography variant="h6" color="text.primary">
+                                                {product.priceInMKD} MKD
+                                            </Typography>
                                         </CardContent>
                                     </CardActionArea>
-                                    { role === Roles.ADMIN ?
-                                        <CardActions>
-                                            <Button color="primary"
-                                                    component={Link}
-                                                    to={`/products/edit/${product.id}`}
-                                            >
-                                                EDIT
-                                            </Button>
-                                        </CardActions>
-                                        : null
-                                    }
-                                    <Button color={"primary"}
-                                            onClick={() => handleAddToCart(product.id)}
-                                            variant="contained">Add to cart</Button>
+                                    <CardActions>
+                                        <div className={`row p-1`}>
+                                            <div className={`col`}>
+                                                <Button color={"primary"}
+                                                        onClick={() => handleAddToCart(product.id)}
+                                                        variant="contained">
+                                                    Add to cart
+                                                </Button>
+                                            </div>
+                                            {role === Roles.ADMIN ?
+                                                <div className={`col-md-4`}>
+                                                    <Button color="primary"
+                                                            component={Link}
+                                                            to={`/products/edit/${product.id}`}
+                                                    >
+                                                        EDIT
+                                                    </Button>
+                                                </div>
+                                                : null
+                                            }
+                                        </div>
+                                    </CardActions>
                                 </Card>
                                 <br/>
                             </div>
