@@ -1,12 +1,10 @@
 import {wrapComponent} from "react-snackbar-alert";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useHistory, useParams} from "react-router";
-import {useFormik} from "formik";
 import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import React, {useEffect, useState} from "react";
-import Roles from "../../auth/Roles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
@@ -16,7 +14,6 @@ import TableBody from "@material-ui/core/TableBody";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import TableContainer from "@material-ui/core/TableContainer";
 import {sortElementsByDateCreated} from "../../utils/utils";
-import {CategoryActions} from "../../redux/actions/categoryActions";
 
 const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -53,14 +50,22 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
 
     const handleDeleteFromCart = productId => {
         dispatch(ShoppingCartActions.deleteFromShoppingCart({
-            'productId' : productId,
-            'username' : username
+            'productId': productId,
+            'username': username
         }, (success, response) => {
             if (success) {
                 window.location.reload();
             }
         }));
     };
+
+    const calculateTotalPrice = products => {
+        let totalPrice = 0;
+        products.map(product => (
+            totalPrice += product.priceInMKD
+        ))
+        return totalPrice;
+    }
 
     return (
         <div className={`container p-5`}>
@@ -110,9 +115,41 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                                 </TableCell>
                             </TableRow>
                         ))}
+                        <TableRow>
+                            <TableCell align="center">Total:</TableCell>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell/>
+                            <TableCell align="left">
+                                {products && calculateTotalPrice(products)}
+                            </TableCell>
+                            <TableCell/>
+                        </TableRow>
                     </TableBody>
                 </Table>
             </TableContainer>
+            <div className={`pt-3 float-right`}>
+                <Button component={Link}
+                        color="primary"
+                        to={`/products`}
+                >
+                    Continue shopping
+                </Button>
+                {
+                    products && products.length > 0 ?
+                        <Button component={Link}
+                                color="primary"
+                                variant="contained"
+                                to={`/order-form/${username}`}
+                                className={`text-white text-decoration-none`}
+                        >
+                            Checkout
+                        </Button>
+                        : null
+                }
+            </div>
         </div>
     );
 });
