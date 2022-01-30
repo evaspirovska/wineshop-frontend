@@ -2,14 +2,14 @@ import {wrapComponent} from "react-snackbar-alert";
 import {useHistory, useParams} from "react-router";
 import * as yup from "yup";
 import {useDispatch} from "react-redux";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import {UserActions} from "../../redux/actions/userActions";
 import {AuthActions} from "../../redux/actions/authActions";
 import * as Yup from "yup";
-import InputLabel from "@material-ui/core/InputLabel";
+import InputLabel from "@mui/material/InputLabel";
 
 const validationSchema = yup.object({
     newPassword: yup.string('Enter your password')

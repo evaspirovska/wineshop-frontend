@@ -1,13 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Form, Field, FieldArray, Formik, useFormikContext} from "formik";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {useDispatch} from "react-redux";
 import * as yup from "yup";
 import {wrapComponent} from "react-snackbar-alert";
 import {useHistory, useParams} from "react-router";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -205,7 +205,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                             <div key={i} className="list-group list-group-flush">
                                 <div className="list-group-item">
                                     <div className="form-row row">
-                                        <div className="form-group col-4">
+                                        <div className="form-group col-5">
                                             <TextField
                                                 className={``}
                                                 fullWidth
@@ -216,9 +216,9 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                                                 value={values.attributes[i].name}
                                             />
                                         </div>
-                                        <div className="form-group col-3">
-                                            <label>Numeric</label>
-                                            <br/>
+                                        <div className="form-group col">
+                                            <FormControl fullWidth>
+                                            <InputLabel>Numeric</InputLabel>
                                             <Select
                                                 name={`attributes.${i}.numeric`}
                                                 onChange={handleChange}
@@ -227,6 +227,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                                                 <MenuItem value={true}>True</MenuItem>
                                                 <MenuItem value={false}>False</MenuItem>
                                             </Select>
+                                            </FormControl>
                                         </div>
                                         <div className="form-group col-4">
                                             <TextField

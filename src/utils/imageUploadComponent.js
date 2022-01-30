@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Button from "@material-ui/core/Button";
-import {Radio} from "@material-ui/core";
+import Button from "@mui/material/Button";
+import {Radio} from "@mui/material";
 
 class ImageUploadComponent extends Component {
 
@@ -99,12 +99,12 @@ class ImageUploadComponent extends Component {
                     {(this.fileArray || []).map((url, i) => (
                         <div className={'col-2 position-relative'}>
                             <Button
-                                color="secondary"
                                 variant="contained"
                                 size={"small"}
-                                className="position-absolute"
+                                className="position-absolute bg-danger"
                                 onClick={() => this.removeImage(i)}
                             >X</Button>
+                            <span className={'m-5'}/>
                             <Radio
                                 checked={this.state.mainImage === i+1}
                                 size={"small"}

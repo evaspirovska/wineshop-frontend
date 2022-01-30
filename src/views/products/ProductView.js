@@ -2,13 +2,16 @@ import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {ProductActions} from "../../redux/actions/productActions";
 import {Link} from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import Roles from "../../auth/Roles";
+import ProductsFilterComponent from "../../utils/productsFilterComponent";
+import {Card, CardContent, CardActions, CardActionArea, CardMedia, Typography} from "@mui/material";
 
 const ProductView = () => {
     const dispatch = useDispatch();
     const products = useSelector(state => state.product.products);
     const auth = useSelector(state => state.auth.currentUser);
+    const [productsFetched, setProductsFetched] = useState(false)
 
     const [role, setRole] = useState(Roles.USER);
 
@@ -19,7 +22,11 @@ const ProductView = () => {
     }, [auth]);
 
     useEffect(() => {
-        dispatch(ProductActions.fetchAllProducts());
+        dispatch(ProductActions.fetchAllProducts((success, response) => {
+            if(Boolean(success)){
+                setProductsFetched(true)
+            }
+        }));
     }, []);
 
     const handleProductDelete = id => {
@@ -47,37 +54,48 @@ const ProductView = () => {
                 </h3>
             </div>
             <div className={`row`}>
-                <div className={`col-md-3`}>
-                    <div>Filter</div>
-                    <div>will be located</div>
-                    <div>here</div>
-                </div>
+                {productsFetched ?
+                    <div className={`col-md-3`}>
+                        <h4>
+                            Filter products
+                        </h4>
+                        <ProductsFilterComponent products={products} />
+                    </div>
+                    : null
+                }
                 <div className={`col-md-9`}>
                     <div className={`row`}>
                         {products && products.map((product, i) => (
                             <div className={`col-md-4 col-sm-6`}>
-                                <div className={`card card-width`}>
-                                    <img src={'http://localhost:8080/api/products/images/' + product.id + '/m/main'} className={`card-img-top`} alt=""/>
-                                    <div className={'card-body'}>
-                                        <h5 className={`card-title`}>{product.productTitle}</h5>
-                                        <p className={`card-text`}>{product.productDescriptionHTML}</p>
-                                    </div>
-                                    <div className={`card-footer`}>
-                                        {
-                                            role === Roles.ADMIN ? <div>
-                                                    <Button component={Link}
-                                                            to={`/products/edit/${product.id}`}
-                                                            variant="contained" color="primary"
-                                                            className={`text-white text-decoration-none`}
-                                                    >
-                                                        EDIT
-                                                    </Button>
-                                                </div>
-                                                :
-                                                null
-                                        }
-                                    </div>
-                                </div>
+                                <Card sx={{ maxWidth: 345 }}>
+                                    <CardActionArea>
+                                        <CardMedia
+                                            component="img"
+                                            height="280"
+                                            image={"http://localhost:8080/api/products/images/" + product.id + "/m/main"}
+                                            alt="green iguana"
+                                        />
+                                        <CardContent>
+                                            <Typography gutterBottom variant="h5" component="div">
+                                                {product.productTitle}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {product.productDescriptionHTML}
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                    { role === Roles.ADMIN ?
+                                        <CardActions>
+                                            <Button color="primary"
+                                                    component={Link}
+                                                    to={`/products/edit/${product.id}`}
+                                            >
+                                                EDIT
+                                            </Button>
+                                        </CardActions>
+                                        : null
+                                    }
+                                </Card>
                                 <br/>
                             </div>
                         ))}

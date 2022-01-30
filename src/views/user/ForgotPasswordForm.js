@@ -4,10 +4,10 @@ import {useDispatch} from "react-redux";
 import {useHistory} from "react-router";
 import {useFormik} from "formik";
 import {UserActions} from "../../redux/actions/userActions";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import React from "react";
-import InputLabel from "@material-ui/core/InputLabel";
+import InputLabel from "@mui/material/InputLabel";
 
 const validationSchema = yup.object({
     email: yup.string('Enter your email')

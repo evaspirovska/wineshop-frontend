@@ -19,8 +19,19 @@ export const ProductActions = {
             callback(false, error);
         })
     },
-    fetchAllProducts: () => dispatch => {
+    fetchAllProducts: (callback) => dispatch => {
         axios.get("/products").then(resp => {
+            dispatch({
+                type: FETCH_PRODUCTS,
+                products: resp.data,
+            });
+            callback(true, resp)
+        }).catch(error => {
+            callback(false, error);
+        });
+    },
+    filterProducts: (string) => dispatch => {
+        axios.get("/products/filter?" + string).then(resp => {
             dispatch({
                 type: FETCH_PRODUCTS,
                 products: resp.data,
