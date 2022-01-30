@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Form, Field, FieldArray, Formik, useFormikContext, useFormik} from "formik";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import {FormControl, InputLabel, MenuItem, Select, InputAdornment} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import * as yup from "yup";
 import {wrapComponent} from "react-snackbar-alert";
@@ -10,14 +10,14 @@ import {useHistory, useParams} from "react-router";
 import {ProductActions} from "../../redux/actions/productActions";
 import {CategoryActions} from "../../redux/actions/categoryActions";
 import {AttributeActions} from "../../redux/actions/attributeActions";
-import {CircularProgress} from "@material-ui/core";
+import {CircularProgress} from "@mui/material";
 import ImageUploadComponent from "../../utils/imageUploadComponent";
 
 const validationSchema = yup.object({
     productTitle: yup.string("Enter product title").required("Product title is required"),
     productDescriptionHTML: yup.string("Enter description").required("Description is required"),
     priceInMKD: yup.number("Enter price").required("Price is required").min(0, 'Minimum price is 0 MKD'),
-    categoryId: yup.number("Please select cateogry").required("Category is required"),
+    categoryId: yup.number("Please select category").required("Category is required"),
 });
 
 const ProductForm = wrapComponent(function ({createSnackbar}) {
@@ -294,7 +294,6 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                     id="priceInMKD"
                                     name="priceInMKD"
                                     label="Price in MKD"
-                                    className={`py-2`}
                                     type="number"
                                     value={values.priceInMKD}
                                     onChange={handleChange}
@@ -302,74 +301,68 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                     helperText={touched.priceInMKD && errors.priceInMKD}
                                 />
                             </div>
-                            <div className={`col py-2`}>
-                                <InputLabel id="label-category">Category</InputLabel>
-                                <Select fullWidth
+                            <div className={`col`}>
+                                <FormControl fullWidth>
+                                    <InputLabel>Category</InputLabel>
+                                    <Select
+                                        error={touched.categoryId && Boolean(errors.categoryId)}
+                                        helperText={touched.categoryId && errors.categoryId}
                                         id='categoryId' name='categoryId'
                                         onChange={change => {
                                             values.categoryId = change.target.value;
                                             onChangeCategory(change.target.value);
                                         }}
                                         value={values.categoryId}
-                                >
-                                    {
-                                        categories.map((category, i) => {
-                                            return (
-                                                <MenuItem key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </MenuItem>
-                                            )
-                                        })
-                                    }
-                                </Select>
-                                {touched.categoryId && Boolean(errors.categoryId) ? (
-                                    <small className={`redGrade`}>{errors.categoryId}</small>
-                                ) : null}
+                                    >
+                                        {
+                                            categories.map((category, i) => {
+                                                return (
+                                                    <MenuItem key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </MenuItem>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl>
                             </div>
                         </div>
                         <div className={'row'}>
-                            <h4>Attributes</h4>
+                            <div className={'col'}>
+                                <h4>Images</h4>
+                                <ImageUploadComponent
+                                    handleImagesChange={handleImagesChange}
+                                    productId={productId ? productId : -1}
+                                    removeImageRemotely={removeImageRemotely}
+                                />
+                                {validateMainImage ? <div className={"text-danger"}>Please select the main product image</div> : null}
+                            </div>
+                            <div className={'col'}>
+                                <h4>Attributes</h4>
+                                <FieldArray name="attributes">
+                                    {() => (attributes.map((attribute, i) => {
+                                        return (
+                                            <TextField
+                                                required
+                                                fullWidth
+                                                label={attributes[i].name}
+                                                name={`attributeIdAndValueMap[${attribute.id}]`}
+                                                type={attributes[i].numeric ? "number" : "text"}
+                                                onChange={handleChange}
+                                                value={values.attributeIdAndValueMap[attribute.id]}
+                                                sx={{ m: 1, width: '25ch' }}
+                                                InputProps={{
+                                                    endAdornment: <InputAdornment position="end">{attributes[i].suffix}</InputAdornment>,
+                                                }}
+                                            />
+                                        );
+                                    }))}
+                                </FieldArray>
+                                {
+                                    areThereAttributes ?  null : "No attributes for this category."
+                                }
+                            </div>
                         </div>
-                        <FieldArray name="attributes">
-                            {() => (attributes.map((attribute, i) => {
-                                return (
-                                    <div key={i} className="list-group list-group-flush">
-                                        <div className="list-group-item row">
-                                            <div className="form-row row justify-content-between">
-                                                <div className="fs-4 col-auto p-0">
-                                                    {attributes[i].name + ':'}
-                                                </div>
-                                                <div className="form-group col-auto">
-                                                    <TextField
-                                                        className={``}
-                                                        fullWidth
-                                                        name={`attributeIdAndValueMap[${attribute.id}]`}
-                                                        type={attributes[i].numeric ? "number" : "text"}
-                                                        onChange={handleChange}
-                                                        value={values.attributeIdAndValueMap[attribute.id]}
-                                                    />
-                                                </div>
-                                                <div className="fs-4 col-auto p-0">
-                                                    {attributes[i].suffix}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            }))}
-                        </FieldArray>
-                        {
-                            areThereAttributes ?  null : "No attributes for this category."
-                        }
-                        <div className={'row'}>
-                            <h4>Images</h4>
-                        </div>
-                        <ImageUploadComponent
-                            handleImagesChange={handleImagesChange}
-                            productId={productId ? productId : -1}
-                            removeImageRemotely={removeImageRemotely}
-                        />
-                        {validateMainImage ? <div className={"text-danger"}>Please select the main product image</div> : null}
                         <div className={`pt-3 float-left`}>
                             {backendWorking ? <CircularProgress /> :
                                 <Button
@@ -380,7 +373,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                             </Button>
                             }
                             {productId && !backendWorking ? <Button
-                                color="secondary"
+                                className={'bg-danger'}
                                 variant="contained"
                                 onClick={() => deleteProduct(productId)}
                             >
