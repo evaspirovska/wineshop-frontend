@@ -10,8 +10,8 @@ import {useHistory, useParams} from "react-router";
 import IconButton from "@mui/material/IconButton";
 import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline'
 import {ProductActions} from "../../../redux/actions/productActions";
 
 const validationSchema = yup.object({

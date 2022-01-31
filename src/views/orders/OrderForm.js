@@ -17,7 +17,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import TableContainer from "@mui/material/TableContainer";
 
 const validationSchema = yup.object({
