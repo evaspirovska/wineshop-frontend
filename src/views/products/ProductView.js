@@ -60,7 +60,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
 
     return (
         <div className={`container p-5`}>
-            <div className={`pb-3 mb-3`}>
+            <div>
                 {
                     role === Roles.ADMIN ?
                         <Button component={Link}
@@ -81,10 +81,12 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
             <div className={`row`}>
                 {productsFetched ?
                     <div className={`col-md-3`}>
-                        <h4>
-                            Filter products
-                        </h4>
-                        <ProductsFilterComponent products={products}/>
+                        <div className={`positionFixed`}>
+                            <h4 className={`pt-4`}>
+                                Filter products
+                            </h4>
+                            <ProductsFilterComponent products={products}/>
+                        </div>
                     </div>
                     : null
                 }

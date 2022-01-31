@@ -114,9 +114,9 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                             </TableRow>
                         ))}
                         <TableRow>
-                            <TableCell align="center">Total:</TableCell>
                             <TableCell/>
                             <TableCell/>
+                            <TableCell align="left">Total:</TableCell>
                             <TableCell/>
                             <TableCell align="left">
                                 {products && calculateTotalPrice(products)} MKD
