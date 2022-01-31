@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from "@mui/material/Button";
-import {Radio} from "@mui/material";
+import {Card, CardMedia, CardActions, Radio, CardActionArea, CardContent, Grid} from "@mui/material";
+import {Add} from "@mui/icons-material"
 
 class ImageUploadComponent extends Component {
 
@@ -56,9 +57,9 @@ class ImageUploadComponent extends Component {
         this.props.handleImagesChange({images, mainImage})
     }
 
-    changeMainImage(e){
-        this.setState({mainImage: Number(e.target.value)})
-        this.handleImageChange(this.state.images, Number(e.target.value))
+    changeMainImage(v){
+        this.setState({mainImage: v})
+        this.handleImageChange(this.state.images, v)
     }
 
     uploadMultipleFiles(e) {
@@ -97,34 +98,33 @@ class ImageUploadComponent extends Component {
             <form className={'row'}>
                 <div className="form-group multi-preview row">
                     {(this.fileArray || []).map((url, i) => (
-                        <div className={'col-2 position-relative'}>
-                            <Button
-                                variant="contained"
-                                size={"small"}
-                                className="position-absolute bg-danger p-0"
-                                onClick={() => this.removeImage(i)}
-                            >X</Button>
-                            <br/>
-                            <Radio
-                                checked={this.state.mainImage === i+1}
-                                size={"small"}
-                                className={"position-absolute bottom-0 end-0 bg-dark text-white ms-5 mt-5"}
-                                onChange={this.changeMainImage}
-                                value={i+1}
-                                name="mainImage"/>
-                            <img src={url} alt="..." className={"img-thumbnail border-3"}/>
-                        </div>
+                        <Card className={this.state.mainImage === i+1 ? 'col-6 border border-warning border-3' : 'col-6'}>
+                            <CardActionArea
+                                onClick={() => this.changeMainImage(i+1)}
+                            >
+                            <CardMedia
+                                component="img"
+                                height="250"
+                                image={url}
+                            />
+                            </CardActionArea>
+                            <CardActions>
+                                <Button className={'text-white bg-danger'} onClick={() => this.removeImage(i)}>X</Button>
+                            </CardActions>
+                        </Card>
                     ))}
-
-                    <div className={'col-2 d-flex align-items-center'}>
-                        <Button
-                            variant="contained"
-                            size="large"
+                    <Card className={'col-6 p-0'}>
+                        <CardActionArea
                             onClick={() => {
                                 document.getElementById("imageUpload").click();
                             }}
-                            >+</Button>
-                    </div>
+                            className={'h-100'}
+                        >
+                            <CardContent sx={{height:250, display:'flex', justifyContent:'center', alignItems:'center'}}>
+                                <Add fontSize={"large"} />
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
                 </div>
 
                 <div className="form-group col mt-3">

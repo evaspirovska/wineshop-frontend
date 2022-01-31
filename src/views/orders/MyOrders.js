@@ -3,15 +3,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {useHistory, useParams} from "react-router";
 import {OrderActions} from "../../redux/actions/orderActions";
 import {Link} from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React, {useEffect, useState} from "react";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import TableContainer from "@mui/material/TableContainer";
 import {sortElementsByDateCreated} from "../../utils/utils";
 
 const MyOrders = wrapComponent(function ({createSnackbar}) {
