@@ -11,14 +11,14 @@ import {CountryDropdown, RegionDropdown, CountryRegionData} from 'react-country-
 import {Link} from 'react-router-dom'
 import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 import {sortElementsByDateCreated} from "../../utils/utils";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import TableContainer from "@material-ui/core/TableContainer";
+import TableContainer from "@mui/material/TableContainer";
 
 const validationSchema = yup.object({
     address: yup.string('Enter your address').required('Address is required'),

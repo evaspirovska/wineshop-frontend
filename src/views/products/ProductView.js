@@ -98,7 +98,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                             component="img"
                                             height="280"
                                             image={"http://localhost:8080/api/products/images/" + product.id + "/m/main"}
-                                            alt="green iguana"
+                                            alt={product.productTitle}
                                         />
                                         <CardContent>
                                             <Typography gutterBottom variant="h5" component="div">

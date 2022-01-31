@@ -335,7 +335,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                     productId={productId ? productId : -1}
                                     removeImageRemotely={removeImageRemotely}
                                 />
-                                {validateMainImage ? <div className={"text-danger"}>Please select the main product image</div> : null}
+                                {validateMainImage ? <div className={"text-warning"}>Please select the main product image</div> : null}
                             </div>
                             <div className={'col'}>
                                 <h4>Attributes</h4>
