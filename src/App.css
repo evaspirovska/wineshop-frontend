@@ -50,10 +50,13 @@
   color: #51b32b
 }
 .card-width {
-  width: 18rem;
+  max-width: 345px;
 }
-.redGrade {
-  color: red;
+.card-title-height {
+  height: 70px;
+}
+.product-details-img-max-width {
+  max-width: 500px;
 }
 .positionFixed {
   position: -webkit-sticky; /* Safari & IE */

@@ -9,12 +9,12 @@ import {
 
 export const ProductActions = {
     fetchProduct: (id, callback) => dispatch => {
-        axios.get(`/products/${id}`).then(resp => {
+        axios.get(`/products/${id}`).then(response => {
             dispatch({
                 type: FETCH_PRODUCT,
-                product: resp.data,
+                product: response.data,
             });
-            callback(true, resp);
+            callback(true, response);
         }).catch((error) => {
             callback(false, error);
         })
