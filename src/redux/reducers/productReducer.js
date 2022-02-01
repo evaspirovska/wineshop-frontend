@@ -25,10 +25,8 @@ export const ProductReducer = (state = initState, action) => {
                 products: sortElementsByDateCreated(action.products),
             };
         case FETCH_PRODUCT:
-            const oldProducts = state.products.filter(product => product.id !== action.product.id);
             return {
                 ...state,
-                products: sortElementsByDateCreated([...oldProducts, action.product]),
             };
         case DELETE_PRODUCT:
             return {

@@ -11,8 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline'
-import {ProductActions} from "../../../redux/actions/productActions";
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 
 const validationSchema = yup.object({
     name: yup.string("Enter Category").required("Category is required")

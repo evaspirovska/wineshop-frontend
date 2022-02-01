@@ -33,10 +33,6 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
         }));
     }, []);
 
-    const handleProductDelete = id => {
-        dispatch(ProductActions.deleteProduct(id));
-    };
-
     const handleAddToCart = id => {
         if (Boolean(role)) {
             dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
@@ -94,8 +90,8 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                     <div className={`row`}>
                         {products && products.map((product, i) => (
                             <div className={`col-md-4 col-sm-6`}>
-                                <Card sx={{maxWidth: 345}}>
-                                    <CardActionArea>
+                                <Card className={`card-width`}>
+                                    <CardActionArea onClick={() => history.push(`/products/${product.id}`)}>
                                         <CardMedia
                                             component="img"
                                             height="280"
@@ -103,11 +99,9 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                             alt={product.productTitle}
                                         />
                                         <CardContent>
-                                            <Typography gutterBottom variant="h5" component="div">
+                                            <Typography className={`card-title-height`}
+                                                        gutterBottom variant="h5" component="div">
                                                 {product.productTitle}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {product.productDescriptionHTML}
                                             </Typography>
                                             <Typography variant="h6" color="text.primary">
                                                 {product.priceInMKD} MKD

@@ -96,7 +96,7 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                                     />
                                 </TableCell>
                                 <TableCell align="left">{product.productTitle}</TableCell>
-                                <TableCell align="left">{product.priceInMKD}</TableCell>
+                                <TableCell align="left">{product.priceInMKD} MKD</TableCell>
                                 <TableCell align="left">{product.quantity}</TableCell>
                                 <TableCell align="left">
                                     {product.priceInMKD * product.quantity} MKD
