@@ -4,7 +4,7 @@ import {
     FILTER_PRODUCTS,
     ADD_PRODUCT,
     UPDATE_PRODUCT,
-    DELETE_PRODUCT,
+    DELETE_PRODUCT, FETCH_PRODUCTS_BY_CATEGORY,
 } from '../actionTypes';
 import {sortElementsByDateCreated} from "../../utils/utils";
 
@@ -15,6 +15,11 @@ const initState = {
 export const ProductReducer = (state = initState, action) => {
     switch (action.type) {
         case FETCH_PRODUCTS:
+            return {
+                ...state,
+                products: sortElementsByDateCreated(action.products),
+            };
+        case FETCH_PRODUCTS_BY_CATEGORY:
             return {
                 ...state,
                 products: sortElementsByDateCreated(action.products),
