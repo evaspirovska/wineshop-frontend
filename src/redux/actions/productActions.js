@@ -2,9 +2,11 @@ import axios from '../../axios/axiosInstance';
 import {
     FETCH_PRODUCT,
     FETCH_PRODUCTS,
+    FETCH_PRODUCTS_BY_CATEGORY,
+    FILTER_PRODUCTS,
     ADD_PRODUCT,
     UPDATE_PRODUCT,
-    DELETE_PRODUCT, ADD_NEW_PRODUCT_IMAGE,
+    DELETE_PRODUCT,
 } from '../actionTypes';
 
 export const ProductActions = {
@@ -30,10 +32,21 @@ export const ProductActions = {
             callback(false, error);
         });
     },
+    fetchAllProductsByCategory: (id, callback) => dispatch => {
+        axios.get(`/products/bycat/${id}`).then(resp => {
+            dispatch({
+                type: FETCH_PRODUCTS_BY_CATEGORY,
+                products: resp.data,
+            });
+            callback(true, resp)
+        }).catch(error => {
+            callback(false, error);
+        });
+    },
     filterProducts: (string) => dispatch => {
         axios.get("/products/filter?" + string).then(resp => {
             dispatch({
-                type: FETCH_PRODUCTS,
+                type: FILTER_PRODUCTS,
                 products: resp.data,
             });
         });

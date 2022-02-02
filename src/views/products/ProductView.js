@@ -8,7 +8,18 @@ import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 import {wrapComponent} from "react-snackbar-alert";
 import {useHistory} from "react-router";
 import ProductsFilterComponent from "../../utils/productsFilterComponent";
-import {Card, CardContent, CardActions, CardActionArea, CardMedia, Typography} from "@mui/material";
+import {
+    Card,
+    CardContent,
+    CardActions,
+    CardActionArea,
+    CardMedia,
+    Typography,
+    InputLabel,
+    Select,
+    MenuItem, FormControl
+} from "@mui/material";
+import {CategoryActions} from "../../redux/actions/categoryActions";
 
 const ProductView = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -16,8 +27,28 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
     const auth = useSelector(state => state.auth.currentUser);
     const history = useHistory();
     const [productsFetched, setProductsFetched] = useState(false)
+    const [categories, setCategories] = useState([])
+    const [currentCategoryName, setCurrentCategoryName] = useState("All Products")
 
     const [role, setRole] = useState(null);
+
+    function onChangeCategory(categoryId) {
+        if(categoryId === -1){
+            dispatch(ProductActions.fetchAllProducts((success, response) => {
+                if (Boolean(success)) {
+                    setCurrentCategoryName("All Products")
+                }
+            }));
+        }
+        else{
+            dispatch(ProductActions.fetchAllProductsByCategory(categoryId, (success, response) => {
+                if (Boolean(success)) {
+                    setProductsFetched(true)
+                    setCurrentCategoryName(categories.filter(el => el.id === categoryId)[0].name)
+                }
+            }))
+        }
+    }
 
     useEffect(() => {
         if (auth) {
@@ -29,6 +60,16 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
         dispatch(ProductActions.fetchAllProducts((success, response) => {
             if (Boolean(success)) {
                 setProductsFetched(true)
+            }
+        }));
+        dispatch(CategoryActions.fetchAllCategories((success, response) => {
+            if (success) {
+                var array = response.data
+                array.unshift({
+                    id: -1,
+                    name: "All Products"
+                })
+                setCategories(array)
             }
         }));
     }, []);
@@ -69,9 +110,8 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                         :
                         null
                 }
-                {/*TODO Robert: The title should be replaced with category name*/}
                 <h3>
-                    Products
+                    {currentCategoryName}
                 </h3>
             </div>
             <div className={`row`}>
@@ -81,6 +121,25 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                             <h4 className={`pt-4`}>
                                 Filter products
                             </h4>
+                            <FormControl fullWidth>
+                                <InputLabel>Category</InputLabel>
+                                <Select
+                                    id='categoryId' name='categoryId'
+                                    onChange={change => {
+                                        onChangeCategory(change.target.value);
+                                    }}
+                                >
+                                    {
+                                        categories.map((category, i) => {
+                                            return (
+                                                <MenuItem key={category.id} value={category.id}>
+                                                    {category.name}
+                                                </MenuItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
                             <ProductsFilterComponent products={products}/>
                         </div>
                     </div>
