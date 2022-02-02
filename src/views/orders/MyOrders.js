@@ -71,7 +71,6 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
                                 <TableCell align="left"/>
                                 <TableCell align="left">Products</TableCell>
                                 <TableCell align="left">Address Details</TableCell>
-                                <TableCell align="left">Postman</TableCell>
                                 <TableCell align="left">Price</TableCell>
                                 <TableCell align="left">Order Status</TableCell>
                             </TableRow>
@@ -91,7 +90,6 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
                                         }
                                     </TableCell>
                                     <TableCell align="left">{order.address} {order.city}</TableCell>
-                                    <TableCell align="left">{order.postmanNameAndSurname}</TableCell>
                                     <TableCell align="left">{calculateTotalPrice(order.productsInOrder)} MKD</TableCell>
                                     <TableCell align="left">{order.orderStatus}</TableCell>
                                 </TableRow>

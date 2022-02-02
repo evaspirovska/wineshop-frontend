@@ -2,11 +2,12 @@ import {wrapComponent} from "react-snackbar-alert";
 import {useHistory, useParams} from "react-router";
 import React, {useEffect, useState} from "react";
 import {ProductActions} from "../../redux/actions/productActions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/fontawesome-free-solid';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 
 const ProductDetails = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -15,6 +16,14 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
     const [isLoading, setLoading] = useState(true);
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const auth = useSelector(state => state.auth.currentUser);
+    const [role, setRole] = useState(null);
+
+    useEffect(() => {
+        if (auth) {
+            setRole(auth.role);
+        }
+    }, [auth]);
 
     useEffect(() => {
         if (Boolean(productId)) {
@@ -33,6 +42,27 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
             }));
         }
     }, []);
+
+    const handleAddToCart = id => {
+        if (Boolean(role)) {
+            dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
+                'productId': id,
+                'quantity': 1,
+            }, (success, response) => {
+                createSnackbar({
+                    message: success ? 'Successfully added product to cart.' : 'Failed to add product to cart.',
+                    timeout: 2500,
+                    theme: success ? 'success' : 'error'
+                });
+            }))
+        } else {
+            createSnackbar({
+                message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
+                timeout: 3000,
+                theme: 'error'
+            });
+        }
+    };
 
     if (isLoading) {
         return (
@@ -70,7 +100,11 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                                 />
                             </div>
                             <div className={`col-md-4 pt-5`}>
-                                <Button className={`py-3 px-5`} color='warning' variant='contained'>
+                                <Button className={`py-3 px-5`}
+                                        color='warning'
+                                        variant='contained'
+                                        onClick={() => handleAddToCart(productId)}
+                                >
                                     Add to cart
                                 </Button>
                             </div>
@@ -103,8 +137,8 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                                     Object.entries(product.attributeNameSuffixAndValueMap).map(([key, values]) => {
                                         return (
                                             <tr>
-                                                <th scope='row' width='25%'>{key}{values[0]}</th>
-                                                <td width='75%'>{values[1]}</td>
+                                                <th scope='row' width='25%'>{key}</th>
+                                                <td width='75%'>{values[1]}{values[0]}</td>
                                             </tr>
                                         );
                                     })

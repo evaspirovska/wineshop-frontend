@@ -12,6 +12,7 @@ import {CategoryActions} from "../../../redux/actions/categoryActions";
 import {AttributeActions} from "../../../redux/actions/attributeActions";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
+import DefaultCategoryAttributes from "./DefaultCategoryAttributes";
 
 const validationSchema = yup.object({
     name: yup.string("Enter Category").required("Category is required")
@@ -198,6 +199,7 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                         )}
                     </Field>
                 </div>
+                <DefaultCategoryAttributes />
                 <FieldArray name="attributes">
                     {() => (values.attributes.map((attribute, i) => {
                         return (

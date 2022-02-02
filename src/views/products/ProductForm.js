@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Form, Field, FieldArray, Formik, useFormikContext, useFormik} from "formik";
+import {Form, FieldArray, Formik } from "formik";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {FormControl, InputLabel, MenuItem, Select, InputAdornment} from "@mui/material";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import * as yup from "yup";
 import {wrapComponent} from "react-snackbar-alert";
 import {useHistory, useParams} from "react-router";
@@ -327,9 +327,10 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                 </FormControl>
                             </div>
                         </div>
-                        <div className={'row'}>
+                        <div className={'row pt-3'}>
                             <div className={'col'}>
                                 <h4>Images</h4>
+                                <small>*Please select the main image by clicking on it after you upload it*</small>
                                 <ImageUploadComponent
                                     handleImagesChange={handleImagesChange}
                                     productId={productId ? productId : -1}
