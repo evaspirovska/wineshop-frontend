@@ -8,6 +8,7 @@ import {faSpinner} from '@fortawesome/fontawesome-free-solid';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
+import {ImageList, ImageListItem} from "@mui/material";
 
 const ProductDetails = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
     const [quantity, setQuantity] = useState(1);
     const auth = useSelector(state => state.auth.currentUser);
     const [role, setRole] = useState(null);
+    const [allImageNames, setAllImageNames] = useState([])
 
     useEffect(() => {
         if (auth) {
@@ -30,6 +32,20 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
             dispatch(ProductActions.fetchProduct(productId, (success, response) => {
                 if (success) {
                     setProduct(response.data);
+                    setLoading(false);
+                } else {
+                    createSnackbar({
+                        message: 'Error getting product details',
+                        timeout: 2500,
+                        theme: 'error'
+                    });
+                    history.goBack();
+                }
+            }));
+            dispatch(ProductActions.fetchAllProductImages(productId, (success, response) => {
+                if (success) {
+                    setAllImageNames(response.data)
+                    console.log(response.data)
                     setLoading(false);
                 } else {
                     createSnackbar({
@@ -73,7 +89,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
         );
     }
     return (
-        <div className={`pt-5`}>
+        product && <div className={`pt-5`}>
             <div className={`container`}>
                 <h2>Product Details</h2>
                 <div className={`row`}>
@@ -145,6 +161,27 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                                 }
                                 </tbody>
                             </table>
+                        </div>
+                        <div className={`row ps-4 fw-light`}>
+                            GALLERY
+                        </div>
+                        <div className={`row pt-4`}>
+                            <ImageList
+                                sx={{ width: 500, height: 450 }}
+                                variant="quilted"
+                                cols={4}
+                                rowHeight={121}
+                            >
+                                {allImageNames.map((name, index) => (
+                                    <ImageListItem>
+                                        <img
+                                            src={`http://localhost:8080/api/products/images/${productId}/s/${name}`}
+                                            onClick={() => history.push(`/products/image/${product.id}/${name}`)}
+                                            loading="lazy"
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
                         </div>
                     </div>
                 </div>

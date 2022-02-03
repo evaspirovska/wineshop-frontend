@@ -1,8 +1,8 @@
 import React, {useRef, useEffect, useState} from "react";
-import {Card, CardContent} from "@mui/material";
+import {Card, CardContent, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import {Slider} from "@mui/material";
 import {AttributeActions} from "../redux/actions/attributeActions";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {ProductActions} from "../redux/actions/productActions";
 import {FormControlLabel} from "@mui/material";
 import {Checkbox} from "@mui/material";
@@ -11,7 +11,7 @@ import {isNaN} from "formik";
 const ProductsFilterComponent = (props) => {
 
     //proizvodi
-    const [products, setProducts] = useState(props.products)
+    const products = useSelector(state => state.product.products);
     //granichni vrednosti (min-max) od site ceni na site proizvodi
     const [priceRange, setPriceRange] = useState([])
     //potrebni informacii (id, ime i suffix) za site atributi koi se naogjaat vo proizvodite (tamu se so id, tuka se so se)
@@ -20,12 +20,15 @@ const ProductsFilterComponent = (props) => {
     const [attributeSets, setAttributeSets] = useState({})
     //finalni filtri, zadadeni od korisnikot, za da ne se menuvaat attributeSets (ni trebaat kako granichni vrednosti)
     const [filters, setFilters] = useState({})
+    const [productsChanged, setProductsChanged] = useState(true)
+    const [currentCategory, setCurrentCategory] = useState(-1)
     const dispatch = useDispatch();
 
     useEffect( () =>{
-        var tempSet = {}
+        var allSets = []
         var priceArray = []
         products.forEach(product => {
+            var tempSet = new Set()
             for(var key in product.attributeIdAndValueMap) {
                 var value = product.attributeIdAndValueMap[key];
                 if(!isNaN(parseFloat(value))){
@@ -38,14 +41,38 @@ const ProductsFilterComponent = (props) => {
                 temp.add(value)
                 tempSet[key] = temp
             }
+            allSets.push(tempSet)
             priceArray.push(product.priceInMKD)
         })
-        setAttributeSets(tempSet)
-        setPriceRange([
-            Math.min.apply(null, priceArray),
-            Math.max.apply(null, priceArray)
-        ])
-    }, [])
+        var attributeIDs = []
+        for(var key in allSets){
+            var tempArray = []
+            for(var key2 in allSets[key]){
+                tempArray.push(key2)
+            }
+            attributeIDs.push(tempArray)
+        }
+        var attributeIDsIntersection = attributeIDs.reduce((a, b) => a.filter(c => b.includes(c)))
+        var finalSet = new Set()
+        for(let i=0; i<attributeIDsIntersection.length; i++){
+            var tempSet = new Set()
+            for (var key in allSets){
+                tempSet.add(allSets[key][attributeIDsIntersection[i]].values().next().value)
+            }
+            finalSet[attributeIDsIntersection[i]] = tempSet
+        }
+        setAttributeSets(finalSet)
+        if(priceRange.length === 0){
+            setPriceRange([
+                Math.min.apply(null, priceArray),
+                Math.max.apply(null, priceArray)
+            ])
+        }
+        setNeededAttributes([])
+    }, [productsChanged])
+
+    //todo: presekot na atributi e dobar, vidi zashto cenata se duplira koga se menjaat
+    //todo: i na backend da se najde nachin koga se filtrira da e po kategorija/da ne frla null exception
 
     useEffect( () =>{
         var allkeys = []
@@ -116,12 +143,12 @@ const ProductsFilterComponent = (props) => {
     function fetchFilteredProducts(){
         if(Object.keys(filters).length === 0)
             return
-        var string = ""
+        var string = 'categoryid=' + currentCategory + '&'
         if(filters['pricerange'] === undefined){
-            string = 'pricerange=mkd:' + priceRange[0] + '-' + priceRange[1] + '&attributes='
+            string = string + 'pricerange=mkd:' + priceRange[0] + '-' + priceRange[1] + '&attributes='
         }
         else{
-            string = 'pricerange=mkd:' + filters['pricerange'][0] + '-' + filters['pricerange'][1] + '&attributes='
+            string = string + 'pricerange=mkd:' + filters['pricerange'][0] + '-' + filters['pricerange'][1] + '&attributes='
         }
         for(var key in filters){
             if(key!=='pricerange' && filters[key].size !== 0){
@@ -135,8 +162,45 @@ const ProductsFilterComponent = (props) => {
         dispatch(ProductActions.filterProducts(string.substring(0, string.length-1)));
     }
 
+    function onChangeCategory(categoryId) {
+        if(categoryId === -1){
+            dispatch(ProductActions.fetchAllProducts((success, response) => {
+                if (Boolean(success)) {
+                    setProductsChanged(!productsChanged)
+                }
+            }));
+        }
+        else{
+            dispatch(ProductActions.fetchAllProductsByCategory(categoryId, (success, response) => {
+                if (Boolean(success)) {
+                    setProductsChanged(!productsChanged)
+                }
+            }))
+        }
+        setCurrentCategory(categoryId)
+    }
+
     return (
         <div>
+            <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                    id='categoryId' name='categoryId'
+                    onChange={change => {
+                        onChangeCategory(change.target.value);
+                    }}
+                >
+                    {
+                        props.categories.map((category, i) => {
+                            return (
+                                <MenuItem key={category.id} value={category.id}>
+                                    {category.name}
+                                </MenuItem>
+                            )
+                        })
+                    }
+                </Select>
+            </FormControl>
             {priceRange[0] && priceRange[1] &&
             <Card className={'mt-1'}>
                 <CardContent className={'ps-5 pe-5 pt-2 pb-0'}>
@@ -164,9 +228,9 @@ const ProductsFilterComponent = (props) => {
                         <h5>{attribute.name}</h5>
                         {isNaN(parseInt(Array.from(attributeSets[attribute.id])[0])) ?
                             Array.from(attributeSets[attribute.id]).map((attributeValue, i) => (
+                                attributeValue === "" ? null :
                                 <FormControlLabel control={
                                     <Checkbox
-                                        //defaultChecked
                                         id={attribute.id}
                                         onChange={handleNonNumericalFilterChange}
                                         name={attributeValue}

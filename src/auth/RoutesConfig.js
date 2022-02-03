@@ -17,6 +17,7 @@ import ShoppingCartView from "../views/shopping_cart/ShoppingCartView";
 import OrderForm from "../views/orders/OrderForm";
 import MyOrders from "../views/orders/MyOrders";
 import ProductDetails from "../views/products/ProductDetails";
+import ProductImage from "../views/products/productImage";
 
 export const PrivateRoutes = [
     {
@@ -144,6 +145,15 @@ export const PublicRoutes = [
         component: ProductDetails,
         path: '/products/:productId',
         title: 'Product Details',
+        permission: [
+            Roles.ADMIN,
+            Roles.USER
+        ]
+    },
+    {
+        component: ProductImage,
+        path: '/products/image/:productId/:imageName',
+        title: 'Product Image',
         permission: [
             Roles.ADMIN,
             Roles.USER

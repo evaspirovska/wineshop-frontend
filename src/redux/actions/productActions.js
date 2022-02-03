@@ -81,6 +81,13 @@ export const ProductActions = {
             callback(false, error);
         })
     },
+    fetchAllProductImages: (product_id, callback) => dispatch => {
+        axios.get(`/products/images/${product_id}`).then(response => {
+            callback(true, response)
+        }).catch((error) => {
+            callback(false, error);
+        })
+    },
     addNewProductImage: (product_id, image, callback) => dispatch => {
         var formData = new FormData()
         formData.append('image', image);
