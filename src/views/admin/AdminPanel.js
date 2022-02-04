@@ -81,7 +81,15 @@ const AdminPanel = wrapComponent(function ({createSnackbar}) {
                         </Table>
                     </TableContainer>
                 </div>
-
+            </div>
+            <div className={`pt-4`}>
+                <Button component={Link}
+                        to={'/create-postman'}
+                        variant="contained" color="primary"
+                        className={`text-white text-decoration-none`}
+                >
+                    Create Postman
+                </Button>
             </div>
         </div>
     );

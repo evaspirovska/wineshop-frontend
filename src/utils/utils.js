@@ -8,7 +8,7 @@ export const useQuery = () => {
 export const transformDate = (dateString) =>{
     const date = new Date(dateString);
 
-    return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`
+    return `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`
 }
 
 export const timeDifferenceInMinutes = (dateFromString, dateToString) =>{

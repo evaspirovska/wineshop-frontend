@@ -18,6 +18,7 @@ import OrderForm from "../views/orders/OrderForm";
 import MyOrders from "../views/orders/MyOrders";
 import ProductDetails from "../views/products/ProductDetails";
 import ProductImage from "../views/products/productImage";
+import PostmanForm from "../views/admin/PostmanForm";
 
 export const PrivateRoutes = [
     {
@@ -60,6 +61,15 @@ export const PrivateRoutes = [
         component: ProductForm,
         path: '/products/edit/:productId',
         title: 'Edit Product',
+        exact: true,
+        permission: [
+            Roles.ADMIN
+        ]
+    },
+    {
+        component: PostmanForm,
+        path: '/create-postman',
+        title: 'Create Postman',
         exact: true,
         permission: [
             Roles.ADMIN

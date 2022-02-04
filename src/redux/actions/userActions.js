@@ -2,7 +2,7 @@ import axios from "../../axios/axiosInstance";
 import {
     FETCH_USER,
     FORGOT_PASSWORD,
-    CHANGE_PASSWORD
+    CHANGE_PASSWORD, CREATE_POSTMAN
 } from "../actionTypes";
 
 export const UserActions = {
@@ -34,6 +34,17 @@ export const UserActions = {
             });
             callback(true, response);
         }).catch(error => {
+            callback(false, error);
+        })
+    },
+    createPostman: (postmanDto, callback) => dispatch => {
+        axios.post("/users/create", postmanDto).then(response => {
+            dispatch({
+                type: CREATE_POSTMAN,
+                postman: response.data,
+            });
+            callback(true, response);
+        }).catch((error) => {
             callback(false, error);
         })
     }

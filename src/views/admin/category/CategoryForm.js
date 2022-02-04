@@ -198,6 +198,9 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                         )}
                     </Field>
                 </div>
+                <div className={`row pb-3`}>
+                    Default category attributes are product title, product description and product price.
+                </div>
                 <FieldArray name="attributes">
                     {() => (values.attributes.map((attribute, i) => {
                         return (
@@ -263,12 +266,15 @@ const CategoryForm = wrapComponent(function ({createSnackbar}) {
                     <Button
                         color="primary"
                         variant="contained"
+                        className={`m-2`}
                         type="submit"
                     >
                         {categoryId ? "Edit" : "Create"}
                     </Button>
                     <Button
                         color="primary"
+                        variant="outlined"
+                        className={`m-2`}
                         href={'/admin'}
                     >
                         Exit

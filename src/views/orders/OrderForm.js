@@ -188,12 +188,12 @@ const OrderForm = wrapComponent(function ({createSnackbar}) {
         );
     } else {
         return (
-            <div className={`container w-50 pt-5`}>
+            <div className={`container w-50 pt-5 text-center`}>
                 <h3>You must be signed in to complete this process</h3>
                 <div className={`row my-4`}>
                     <div className={`col`}>
                         <Button component={Link} to={`/products`}
-                                color="primary" fullWidth>
+                                color="primary" variant="outlined" fullWidth>
                             Products
                         </Button>
                     </div>

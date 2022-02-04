@@ -7,7 +7,6 @@ import {UserActions} from "../../redux/actions/userActions";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import React from "react";
-import InputLabel from "@mui/material/InputLabel";
 
 const validationSchema = yup.object({
     email: yup.string('Enter your email')
@@ -50,11 +49,9 @@ const ForgotPasswordForm = wrapComponent(function ({createSnackbar}) {
             <h4>
                 Please enter your email in order to reset your password.
             </h4>
-            <InputLabel className={`pt-3`}>
-                Email
-            </InputLabel>
             <TextField fullWidth
-                       id='email' name='email'
+                       id='email' name='email' label='example@email.com'
+                       className={`mt-3`}
                        value={formik.values.email}
                        onChange={formik.handleChange}
                        error={formik.touched.email && Boolean(formik.errors.email)}

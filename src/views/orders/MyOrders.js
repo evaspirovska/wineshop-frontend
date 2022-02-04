@@ -12,7 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import {sortElementsByDateCreated} from "../../utils/utils";
+import {sortElementsByDateCreated, transformDate} from "../../utils/utils";
 
 const MyOrders = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -71,6 +71,7 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
                                 <TableCell align="left"/>
                                 <TableCell align="left">Products</TableCell>
                                 <TableCell align="left">Address Details</TableCell>
+                                <TableCell align="left">Date</TableCell>
                                 <TableCell align="left">Price</TableCell>
                                 <TableCell align="left">Order Status</TableCell>
                             </TableRow>
@@ -90,6 +91,7 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
                                         }
                                     </TableCell>
                                     <TableCell align="left">{order.address} {order.city}</TableCell>
+                                    <TableCell align="left">{transformDate(order.dateCreated)}</TableCell>
                                     <TableCell align="left">{calculateTotalPrice(order.productsInOrder)} MKD</TableCell>
                                     <TableCell align="left">{order.orderStatus}</TableCell>
                                 </TableRow>
@@ -112,18 +114,18 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
     } else {
         return (
             <div className={`container pt-5 w-50`}>
-                <h3>You must be signed in to see your orders.</h3>
+                <h3 className={`text-center`}>You must be signed in to see your orders.</h3>
                 <div className={`row my-4`}>
                     <div className={`col`}>
                         <Button component={Link} to={`/products`}
-                                color="primary" fullWidth>
+                                color="primary" variant="outlined" fullWidth>
                             Products
                         </Button>
                     </div>
                     <div className={`col`}>
                         <Button component={Link} to={`/signin`}
                                 color="primary" variant="contained" fullWidth
-                                className={`text-white text-decoration-none`}
+                                className={`text-white`}
                         >
                             Sign in
                         </Button>

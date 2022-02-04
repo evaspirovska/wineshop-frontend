@@ -51,6 +51,7 @@ const SignInForm = wrapComponent(function ({createSnackbar}) {
                 id="username"
                 name="username"
                 label="Username"
+                className={`mt-3`}
                 value={formik.values.username}
                 onChange={formik.handleChange}
                 error={formik.touched.username && Boolean(formik.errors.username)}
@@ -63,6 +64,7 @@ const SignInForm = wrapComponent(function ({createSnackbar}) {
                 name="password"
                 label="Password"
                 type="password"
+                className={`mt-3`}
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 error={formik.touched.password && Boolean(formik.errors.password)}
@@ -82,7 +84,7 @@ const SignInForm = wrapComponent(function ({createSnackbar}) {
                 </small>
             </div>
             <Button color="primary" variant="contained" fullWidth type="submit">
-                Submit
+                Sign in
             </Button>
         </form>
     );
