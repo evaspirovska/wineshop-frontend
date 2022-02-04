@@ -117,7 +117,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                             </div>
                             <div className={`col-md-4 pt-5`}>
                                 <Button className={`py-3 px-5`}
-                                        color='warning'
+                                        color='primary'
                                         variant='contained'
                                         onClick={() => handleAddToCart(productId)}
                                 >

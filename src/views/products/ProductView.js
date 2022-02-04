@@ -7,7 +7,7 @@ import Roles from "../../auth/Roles";
 import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 import {wrapComponent} from "react-snackbar-alert";
 import {useHistory} from "react-router";
-import ProductsFilterComponent from "../../utils/productsFilterComponent";
+import ProductsFilterComponent from "../../components/productsFilterComponent";
 import {
     Card,
     CardContent,

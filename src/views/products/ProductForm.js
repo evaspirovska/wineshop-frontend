@@ -11,7 +11,7 @@ import {ProductActions} from "../../redux/actions/productActions";
 import {CategoryActions} from "../../redux/actions/categoryActions";
 import {AttributeActions} from "../../redux/actions/attributeActions";
 import {CircularProgress} from "@mui/material";
-import ImageUploadComponent from "../../utils/imageUploadComponent";
+import ImageUploadComponent from "../../components/imageUploadComponent";
 
 const validationSchema = yup.object({
     productTitle: yup.string("Enter product title").required("Product title is required"),

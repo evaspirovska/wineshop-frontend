@@ -1,8 +1,9 @@
 import {
-    CHANGE_PASSWORD,
+    CHANGE_PASSWORD, CREATE_POSTMAN,
     FETCH_USER,
     FORGOT_PASSWORD,
 } from "../actionTypes";
+import {sortElementsByDateCreated} from "../../utils/utils";
 
 const initState = {
     users: []
@@ -25,6 +26,11 @@ export const UserReducer = (state = initState, action) => {
             return {
                 ...state,
                 users: [action.user, ...usersBeforeChangePassword]
+            }
+        case CREATE_POSTMAN:
+            return {
+                ...state,
+                users: sortElementsByDateCreated([...state.users, action.postman])
             }
         default:
             return state;
