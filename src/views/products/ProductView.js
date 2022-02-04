@@ -77,6 +77,29 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
         }
     };
 
+    if (products && products.length === 0) {
+        return (
+            <div className={`container pt-5`}>
+                <div>
+                    {
+                        role === Roles.ADMIN ?
+                            <Button component={Link}
+                                    to={'/products/add'}
+                                    variant="contained" color="primary"
+                                    className={`text-white text-decoration-none float-right`}
+                            >
+                                ADD PRODUCT
+                            </Button>
+                            :
+                            null
+                    }
+                    <h3>
+                        Currently there are no available products.
+                    </h3>
+                </div>
+            </div>
+        );
+    }
     return (
         <div className={`container p-5`}>
             <div>
