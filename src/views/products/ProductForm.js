@@ -16,6 +16,7 @@ import ImageUploadComponent from "../../components/imageUploadComponent";
 const validationSchema = yup.object({
     productTitle: yup.string("Enter product title").required("Product title is required"),
     productDescriptionHTML: yup.string("Enter description").required("Description is required"),
+    quantity: yup.number("Enter quantity").required("Quantity is required").min(0, 'Minimum quantity is 0'),
     priceInMKD: yup.number("Enter price").required("Price is required").min(0, 'Minimum price is 0 MKD'),
     categoryId: yup.number("Please select category").required("Category is required"),
 });
@@ -41,7 +42,8 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
         categoryId: '',
         productTitle: '',
         productDescriptionHTML: '',
-        priceInMKD: '',
+        quantity: 0,
+        priceInMKD: 0,
         attributeIdAndValueMap: {},
     }
 
@@ -53,6 +55,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                     formikRef.current.setFieldValue("categoryId", response.data.categoryId);
                     formikRef.current.setFieldValue("productTitle", response.data.productTitle);
                     formikRef.current.setFieldValue("productDescriptionHTML", response.data.productDescriptionHTML);
+                    formikRef.current.setFieldValue("quantity", response.data.quantity);
                     formikRef.current.setFieldValue("priceInMKD", response.data.priceInMKD);
                     formikRef.current.setFieldValue("attributeIdAndValueMap", response.data.attributeIdAndValueMap);
                     dispatch(AttributeActions.fetchAttributesByCategory(response.data.categoryId, (success, response) => {
@@ -146,6 +149,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                 categoryId: values.categoryId,
                 productTitle: values.productTitle,
                 productDescriptionHTML: values.productDescriptionHTML,
+                quantity: values.quantity,
                 priceInMKD: values.priceInMKD,
                 attributeIdAndValueMap: values.attributeIdAndValueMap
             }, (success, response) => {
@@ -225,6 +229,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                 categoryId: values.categoryId,
                 productTitle: values.productTitle,
                 productDescriptionHTML: values.productDescriptionHTML,
+                quantity: values.quantity,
                 priceInMKD: values.priceInMKD,
                 attributeIdAndValueMap: values.attributeIdAndValueMap
             }, (success, response) => {
@@ -286,6 +291,18 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                             onChange={handleChange}
                             error={touched.productDescriptionHTML && Boolean(errors.productDescriptionHTML)}
                             helperText={touched.productDescriptionHTML && errors.productDescriptionHTML}
+                        />
+                        <TextField
+                            fullWidth
+                            id="quantity"
+                            name="quantity"
+                            label="Product quantity"
+                            type="number"
+                            className={`py-2`}
+                            value={values.quantity}
+                            onChange={handleChange}
+                            error={touched.quantity && Boolean(errors.quantity)}
+                            helperText={touched.quantity && errors.quantity}
                         />
                         <div className={`row`}>
                             <div className={`col`}>
@@ -369,12 +386,13 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                                 <Button
                                 color="primary"
                                 variant="contained"
+                                className={`m-2`}
                                 type="submit">
                                 {productId ? "Edit" : "Create"}
                             </Button>
                             }
                             {productId && !backendWorking ? <Button
-                                className={'bg-danger'}
+                                className={'bg-danger m-2'}
                                 variant="contained"
                                 onClick={() => deleteProduct(productId)}
                             >
@@ -383,6 +401,7 @@ const ProductForm = wrapComponent(function ({createSnackbar}) {
                             {backendWorking ? null :
                                 <Button
                                 color="primary"
+                                className={`m-2`}
                                 href={'/products'}
                             >
                                 Exit
