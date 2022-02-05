@@ -64,7 +64,7 @@ const OrderForm = wrapComponent(function ({createSnackbar}) {
     const calculateTotalPrice = products => {
         let totalPrice = 0;
         products.map(product => (
-            totalPrice += product.priceInMKD
+            totalPrice = totalPrice + product.priceInMKD * product.quantity
         ))
         return totalPrice;
     }
