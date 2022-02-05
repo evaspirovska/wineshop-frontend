@@ -77,7 +77,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
         }
     };
 
-    if (products && products.length === 0) {
+    if (productsFetched && productsFetched.length === 0) {
         return (
             <div className={`container pt-5`}>
                 <div>
