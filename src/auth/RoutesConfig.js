@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import HomePage from '../views/HomePage';
 import SignInForm from '../views/auth/SignInForm';
 import AdminPanel from "../views/admin/AdminPanel";
-import Roles from './Roles';
+import Roles from '../enumerations/Roles';
 import SignUpForm from "../views/auth/SignUpForm";
 import CategoryForm from "../views/admin/category/CategoryForm";
 import ChangePasswordForm from "../views/user/ChangePasswordForm";
@@ -19,6 +19,7 @@ import MyOrders from "../views/orders/MyOrders";
 import ProductDetails from "../views/products/ProductDetails";
 import ProductImage from "../views/products/productImage";
 import PostmanForm from "../views/admin/PostmanForm";
+import PostmanOrders from "../views/postman/PostmanOrders";
 
 export const PrivateRoutes = [
     {
@@ -75,6 +76,15 @@ export const PrivateRoutes = [
             Roles.ADMIN
         ]
     },
+    {
+        component: PostmanOrders,
+        path: '/postman-orders/:postman',
+        title: 'Orders by postman',
+        exact: true,
+        permission: [
+            Roles.POSTMAN
+        ]
+    },
 ];
 
 export const PublicRoutes = [
@@ -85,7 +95,8 @@ export const PublicRoutes = [
         exact: true,
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -94,7 +105,8 @@ export const PublicRoutes = [
         title: 'Sign In',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -103,7 +115,8 @@ export const PublicRoutes = [
         title: 'Sign Up',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -112,7 +125,8 @@ export const PublicRoutes = [
         title: 'Forgot Password',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -121,7 +135,8 @@ export const PublicRoutes = [
         title: 'Change Password',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -130,7 +145,8 @@ export const PublicRoutes = [
         title: 'Successfully sent email',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {
@@ -139,7 +155,8 @@ export const PublicRoutes = [
         title: 'Invalid Token',
         permission: [
             Roles.ADMIN,
-            Roles.USER
+            Roles.USER,
+            Roles.POSTMAN
         ]
     },
     {

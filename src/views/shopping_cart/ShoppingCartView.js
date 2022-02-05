@@ -14,6 +14,8 @@ import TableBody from "@mui/material/TableBody";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import TableContainer from "@mui/material/TableContainer";
 import {sortElementsByDateCreated} from "../../utils/utils";
+import TextField from "@mui/material/TextField";
+import {ProductActions} from "../../redux/actions/productActions";
 
 const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -87,25 +89,36 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products && products.map((product, i) => (
-                            <TableRow key={product.id}>
+                        {products && products.map((productInCart, i) => (
+                            <TableRow key={productInCart.id}>
                                 <TableCell component="th" scope="row" padding="none"
                                            align="center">
-                                    <img src={`http://localhost:8080/api/products/images/${product.productId}/s/main`}
-                                         alt={`Product IMG`}
+                                    <img
+                                        src={`http://localhost:8080/api/products/images/${productInCart.productId}/s/main`}
+                                        alt={`Product IMG`}
                                     />
                                 </TableCell>
-                                <TableCell align="left">{product.productTitle}</TableCell>
-                                <TableCell align="left">{product.priceInMKD} MKD</TableCell>
-                                <TableCell align="left">{product.quantity}</TableCell>
+                                <TableCell align="left">{productInCart.productTitle}</TableCell>
+                                <TableCell align="left">{productInCart.priceInMKD} MKD</TableCell>
                                 <TableCell align="left">
-                                    {product.priceInMKD * product.quantity} MKD
+                                    <TextField
+                                        id="quantity"
+                                        name="quantity"
+                                        label="Quantity"
+                                        type="number"
+                                        disabled
+                                        className={`input-number-width`}
+                                        value={productInCart.quantity}
+                                    />
+                                </TableCell>
+                                <TableCell align="left">
+                                    {productInCart.priceInMKD * productInCart.quantity} MKD
                                 </TableCell>
                                 <TableCell align="left">
                                     <Button onClick={() => {
                                         // eslint-disable-next-line no-unused-expressions
                                         (window.confirm('Are you sure you wish to delete this item from the cart?')) ?
-                                            handleDeleteFromCart(product.id)
+                                            handleDeleteFromCart(productInCart.id)
                                             : null
                                     }}>
                                         <HighlightOffIcon/>

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
-import Roles from '../../auth/Roles';
+import Roles from '../../enumerations/Roles';
 import {AuthButton} from '../../components/AuthButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/fontawesome-free-solid';
@@ -38,13 +38,25 @@ const Header = () => {
                     Home
                 </Link>
                 <ul className={`navbar-nav`}>
-                    <Link
-                        to="/products"
-                        replace={false}
-                        className={`nav-link nav-item shadow-outer ${activePath('/products')}`}
-                    >
-                        Products
-                    </Link>
+                    {
+                        role === Roles.POSTMAN ? (
+                            <Link
+                                to={`/postman-orders/${username}`}
+                                replace={false}
+                                className={`nav-link nav-item shadow-outer ${activePath('/products')}`}
+                            >
+                                Orders
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/products"
+                                replace={false}
+                                className={`nav-link nav-item shadow-outer ${activePath('/products')}`}
+                            >
+                                Products
+                            </Link>
+                        )
+                    }
                     {
                         role === Roles.ADMIN || role === Roles.USER ?
                             (

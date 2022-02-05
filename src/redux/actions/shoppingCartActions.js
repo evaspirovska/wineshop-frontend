@@ -2,7 +2,7 @@ import axios from "../../axios/axiosInstance";
 import {
     FETCH_SHOPPING_CART,
     ADD_TO_SHOPPING_CART,
-    DELETE_FROM_SHOPPING_CART,
+    DELETE_FROM_SHOPPING_CART, UPDATE_PRODUCT_IN_CART,
 } from "../actionTypes";
 
 export const ShoppingCartActions = {
@@ -39,4 +39,14 @@ export const ShoppingCartActions = {
             callback(false, error)
         });
     },
+    updateProductInCart: (updateProductInShoppingCartDto, callback) => dispatch => {
+        axios.put(`/shoppingCart/updateProductInCart`, updateProductInShoppingCartDto).then(response => {
+            dispatch({
+                type: UPDATE_PRODUCT_IN_CART,
+            });
+            callback(true);
+        }).catch(error => {
+            callback(false, error)
+        })
+    }
 }
