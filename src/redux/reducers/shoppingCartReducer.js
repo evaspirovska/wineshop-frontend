@@ -12,19 +12,19 @@ export const ShoppingCartReducer = (state = initState, action) => {
     switch (action.type) {
         case FETCH_SHOPPING_CART:
             return {
-                ...state,
+                state,
             };
         case ADD_TO_SHOPPING_CART:
             return {
-                ...state,
+                state,
             }
         case DELETE_FROM_SHOPPING_CART:
             return {
-                ...state,
+                state,
             }
         case UPDATE_PRODUCT_IN_CART:
             return {
-                ...state,
+                state,
             }
         default:
             return state;

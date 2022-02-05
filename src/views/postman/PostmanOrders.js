@@ -14,7 +14,7 @@ import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import {sortElementsByDateCreated, transformDate} from "../../utils/utils";
 import {MenuItem, Select} from "@mui/material";
-import OrderStatus from "../../enumerations/OrderStatus";
+import OrderStatus, {getOrderStatusName} from "../../enumerations/OrderStatus";
 
 const PostmanOrders = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -52,6 +52,7 @@ const PostmanOrders = wrapComponent(function ({createSnackbar}) {
                 });
             }
         }));
+        window.location.reload();
     }
 
     const calculateTotalPrice = products => {
@@ -107,7 +108,6 @@ const PostmanOrders = wrapComponent(function ({createSnackbar}) {
                                     <TableCell align="left">{transformDate(order.dateCreated)}</TableCell>
                                     <TableCell align="left">{calculateTotalPrice(order.productsInOrder)} MKD</TableCell>
                                     <TableCell align="left">
-                                        {order.orderStatus}
                                         <Select fullWidth
                                                 id='orderStatus' name='orderStatus'
                                                 onChange={(event) =>
@@ -115,11 +115,11 @@ const PostmanOrders = wrapComponent(function ({createSnackbar}) {
                                                 value={order.orderStatus}
                                         >
                                             {
-                                                Object.keys(OrderStatus).map(orderStatusName => (
-                                                    <MenuItem key={OrderStatus[orderStatusName]}
-                                                              value={OrderStatus[orderStatusName]}
+                                                Object.keys(OrderStatus).map(orderStatus => (
+                                                    <MenuItem key={OrderStatus[orderStatus]}
+                                                              value={OrderStatus[orderStatus]}
                                                     >
-                                                        {orderStatusName}
+                                                        {getOrderStatusName(orderStatus)}
                                                     </MenuItem>
                                                 ))
                                             }
