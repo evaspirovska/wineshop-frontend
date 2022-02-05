@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {ProductActions} from "../../redux/actions/productActions";
 import {Link} from "react-router-dom";
 import Button from "@mui/material/Button";
-import Roles from "../../auth/Roles";
+import Roles from "../../enumerations/Roles";
 import {ShoppingCartActions} from "../../redux/actions/shoppingCartActions";
 import {wrapComponent} from "react-snackbar-alert";
 import {useHistory} from "react-router";

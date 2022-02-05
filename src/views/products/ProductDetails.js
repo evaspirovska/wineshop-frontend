@@ -59,26 +59,61 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
         }
     }, []);
 
-    const handleAddToCart = id => {
-        if (Boolean(role)) {
-            dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
-                'productId': id,
-                'quantity': 1,
-            }, (success, response) => {
+    const handleAddToCart = (id, quantity) => {
+        dispatch(ProductActions.checkProductQuantity({
+            productId: id,
+            quantity: quantity,
+        }, (success, response) => {
+            if (success) {
+                if (!response.hasEnoughQuantity) {
+                    createSnackbar({
+                        message: `You can't add ${quantity} items of the desired product to the cart, 
+                        there are only ${response.quantity} items available.`,
+                        timeout: 3200,
+                        theme: 'error'
+                    });
+                } else {
+                    if (Boolean(role)) {
+                        dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
+                            'productId': id,
+                            'quantity': quantity,
+                        }, (success, response) => {
+                            createSnackbar({
+                                message: success ? 'Successfully added product to cart.'
+                                    : 'Failed to add product to cart.',
+                                timeout: 2500,
+                                theme: success ? 'success' : 'error'
+                            });
+                        }))
+                    } else {
+                        createSnackbar({
+                            message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
+                            timeout: 3000,
+                            theme: 'error'
+                        });
+                    }
+                }
+            } else {
                 createSnackbar({
-                    message: success ? 'Successfully added product to cart.' : 'Failed to add product to cart.',
+                    message: `Error while checking product quantity.`,
                     timeout: 2500,
-                    theme: success ? 'success' : 'error'
+                    theme: 'error'
                 });
-            }))
-        } else {
+            }
+        }))
+    };
+
+    const handleQuantityChange = quantity => {
+        if (quantity < 0) {
             createSnackbar({
-                message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
-                timeout: 3000,
+                message: 'Quantity must be a positive number.',
+                timeout: 2500,
                 theme: 'error'
             });
+        } else {
+            setQuantity(quantity);
         }
-    };
+    }
 
     if (isLoading) {
         return (
@@ -110,16 +145,15 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                                     label="Quantity"
                                     type="number"
                                     value={quantity}
-                                    // onChange={handleChange}
-                                    // error={touched.quantity && Boolean(errors.quantity)}
-                                    // helperText={touched.quantity && errors.quantity}
+                                    onChange={(event) =>
+                                        handleQuantityChange(event.target.value)}
                                 />
                             </div>
                             <div className={`col-md-4 pt-5`}>
                                 <Button className={`py-3 px-5`}
                                         color='primary'
                                         variant='contained'
-                                        onClick={() => handleAddToCart(productId)}
+                                        onClick={() => handleAddToCart(productId, quantity)}
                                 >
                                     Add to cart
                                 </Button>
@@ -167,7 +201,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                         </div>
                         <div className={`row pt-4`}>
                             <ImageList
-                                sx={{ width: 500, height: 450 }}
+                                sx={{width: 500, height: 450}}
                                 variant="quilted"
                                 cols={4}
                                 rowHeight={121}

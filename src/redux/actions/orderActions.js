@@ -1,7 +1,7 @@
 import axios from "../../axios/axiosInstance";
 import {
-    FETCH_ORDERS,
-    MAKE_ORDER
+    FETCH_ORDERS, FETCH_ORDERS_BY_POSTMAN,
+    MAKE_ORDER, UPDATE_ORDER_STATUS
 } from "../actionTypes";
 
 export const OrderActions = {
@@ -27,4 +27,23 @@ export const OrderActions = {
             callback(false,error)
         });
     },
+    fetchOrdersByPostman: (postman, callback) => dispatch => {
+        axios.get(`/orders?postman=${postman}`).then(response => {
+            dispatch({
+                type: FETCH_ORDERS_BY_POSTMAN,
+                ordersByPostman: response.data,
+            });
+            callback(true, response);
+        }).catch(error => {
+            callback(false,error)
+        });
+    },
+    updateOrderStatus: (updateOrderStatusDto, callback) => dispatch => {
+        axios.put(`/orders/update-status`, updateOrderStatusDto).then(response => {
+            dispatch({
+                type: UPDATE_ORDER_STATUS,
+                order: response.data,
+            })
+        })
+    }
 }

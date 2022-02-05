@@ -6,7 +6,7 @@ import {
     FILTER_PRODUCTS,
     ADD_PRODUCT,
     UPDATE_PRODUCT,
-    DELETE_PRODUCT,
+    DELETE_PRODUCT, CHECK_PRODUCT_QUANTITY,
 } from '../actionTypes';
 
 export const ProductActions = {
@@ -78,6 +78,17 @@ export const ProductActions = {
             });
             callback(true, response);
         }).catch((error) => {
+            callback(false, error);
+        })
+    },
+    checkProductQuantity: (checkProductQuantityDTO, callback) => dispatch => {
+        axios.post(`/products/check-quantity`, checkProductQuantityDTO).then((response) => {
+            dispatch({
+                type: CHECK_PRODUCT_QUANTITY,
+                result: response.data
+            });
+            callback(true, response);
+        }).catch(error => {
             callback(false, error);
         })
     },
