@@ -13,6 +13,7 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import {sortElementsByDateCreated, transformDate} from "../../utils/utils";
+import {getOrderStatusName} from "../../enumerations/OrderStatus";
 
 const MyOrders = wrapComponent(function ({createSnackbar}) {
     const dispatch = useDispatch();
@@ -93,7 +94,7 @@ const MyOrders = wrapComponent(function ({createSnackbar}) {
                                     <TableCell align="left">{order.address} {order.city}</TableCell>
                                     <TableCell align="left">{transformDate(order.dateCreated)}</TableCell>
                                     <TableCell align="left">{calculateTotalPrice(order.productsInOrder)} MKD</TableCell>
-                                    <TableCell align="left">{order.orderStatus}</TableCell>
+                                    <TableCell align="left">{getOrderStatusName(order.orderStatus)}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

@@ -17,7 +17,7 @@ export const OrderActions = {
         });
     },
     fetchOrders: (username, callback) => dispatch => {
-        axios.get(`/orders?username=${username}`).then(response => {
+        axios.get(`/orders/user/${username}`).then(response => {
             dispatch({
                 type: FETCH_ORDERS,
                 orders: response.data,
@@ -28,7 +28,7 @@ export const OrderActions = {
         });
     },
     fetchOrdersByPostman: (postman, callback) => dispatch => {
-        axios.get(`/orders?postman=${postman}`).then(response => {
+        axios.get(`/orders/postman/${postman}`).then(response => {
             dispatch({
                 type: FETCH_ORDERS_BY_POSTMAN,
                 ordersByPostman: response.data,
