@@ -67,7 +67,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
             if (success) {
                 if (!response.hasEnoughQuantity) {
                     createSnackbar({
-                        message: `You can't add ${quantity} items of the desired product to the cart, 
+                        message: `You can't add ${quantity} items of ${response.product.productTitle} to the cart, 
                         there are only ${response.product.quantity} items available.`,
                         timeout: 3200,
                         theme: 'error'
