@@ -81,6 +81,7 @@ const AdminOrders = wrapComponent(function ({createSnackbar}) {
                                 <TableCell align="left">Contact</TableCell>
                                 <TableCell align="left">Date</TableCell>
                                 <TableCell align="left">Price</TableCell>
+                                <TableCell align="left">Postman</TableCell>
                                 <TableCell align="left">Order Status</TableCell>
                             </TableRow>
                         </TableHead>
@@ -106,6 +107,10 @@ const AdminOrders = wrapComponent(function ({createSnackbar}) {
                                     <TableCell align="left">{order.telephone}</TableCell>
                                     <TableCell align="left">{transformDate(order.dateCreated)}</TableCell>
                                     <TableCell align="left">{calculateTotalPrice(order.productsInOrder)} MKD</TableCell>
+                                    <TableCell align="left">
+                                        <div>{order.postmanUsername}</div>
+                                        <div>{order.postmanNameAndSurname}</div>
+                                    </TableCell>
                                     <TableCell align="left">
                                         <Select fullWidth
                                                 id='orderStatus' name='orderStatus'
