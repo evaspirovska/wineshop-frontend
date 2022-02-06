@@ -20,6 +20,7 @@ import ProductDetails from "../views/products/ProductDetails";
 import ProductImage from "../views/products/productImage";
 import PostmanForm from "../views/admin/PostmanForm";
 import PostmanOrders from "../views/postman/PostmanOrders";
+import AdminOrders from "../views/admin/AdminOrders";
 
 export const PrivateRoutes = [
     {
@@ -83,6 +84,15 @@ export const PrivateRoutes = [
         exact: true,
         permission: [
             Roles.POSTMAN
+        ]
+    },
+    {
+        component: AdminOrders,
+        path: '/all',
+        title: 'Orders by admin',
+        exact: true,
+        permission: [
+            Roles.ADMIN
         ]
     },
 ];

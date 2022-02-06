@@ -58,7 +58,7 @@ const Header = () => {
                         )
                     }
                     {
-                        role === Roles.ADMIN || role === Roles.USER ?
+                         role === Roles.USER || role == Roles.ADMIN ?
                             (
                                 <React.Fragment>
                                     <Link
@@ -85,6 +85,14 @@ const Header = () => {
                     {role === Roles.ADMIN ?
                         (
                             <React.Fragment>
+                                <Link
+                                    to={`/all`}
+                                    replace={false}
+                                    className={`nav-link nav-item shadow-outer 
+                                        ${activePath(`/all`)}`}
+                                >
+                                    All Orders
+                                </Link>
                                 <Link
                                     to="/admin"
                                     replace={false}
