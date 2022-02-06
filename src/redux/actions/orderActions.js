@@ -1,6 +1,6 @@
 import axios from "../../axios/axiosInstance";
 import {
-    FETCH_ORDERS, FETCH_ORDERS_BY_POSTMAN,
+    FETCH_ORDERS, FETCH_ORDERS_BY_ADMIN, FETCH_ORDERS_BY_POSTMAN,
     MAKE_ORDER, UPDATE_ORDER_STATUS
 } from "../actionTypes";
 
@@ -21,6 +21,17 @@ export const OrderActions = {
             dispatch({
                 type: FETCH_ORDERS,
                 orders: response.data,
+            });
+            callback(true, response);
+        }).catch(error => {
+            callback(false,error)
+        });
+    },
+    fetchOrdersByAdmin: (callback) => dispatch => {
+        axios.get(`/orders/all`).then(response => {
+            dispatch({
+                type: FETCH_ORDERS_BY_ADMIN,
+                ordersByAdmin: response.data,
             });
             callback(true, response);
         }).catch(error => {
