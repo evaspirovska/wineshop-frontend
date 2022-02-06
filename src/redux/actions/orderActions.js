@@ -7,10 +7,12 @@ import {
 export const OrderActions = {
     makeOrder: (order, callback) => dispatch => {
         axios.post(`/orders/makeOrder`, order).then(response => {
-            dispatch({
-                type: MAKE_ORDER,
-                order: response.data,
-            });
+            if (Boolean(response.data.userUsername)) {
+                dispatch({
+                    type: MAKE_ORDER,
+                    order: response.data,
+                });
+            }
             callback(true, response)
         }).catch((error) => {
             callback(false, error)

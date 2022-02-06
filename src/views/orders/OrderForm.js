@@ -84,12 +84,25 @@ const OrderForm = wrapComponent(function ({createSnackbar}) {
                         telephone: values.telephone,
                         address: values.address
                     }, (success, response) => {
-                        createSnackbar({
-                            message: success ? 'Successfully made order.' : 'Error while making order. Try again!',
-                            timeout: 2500,
-                            theme: success ? 'success' : 'error'
-                        });
-                        success && history.push(`/my-orders/${username}`);
+                        if (success) {
+                            if (Boolean(response.data.hasEnoughQuantity) && !response.data.hasEnoughQuantity) {
+                                createSnackbar({
+                                    message: `You can't add the desired quantity of 
+                                    ${response.data.product.productTitle} to the cart, 
+                                    there are only ${response.data.product.quantity} items available.`,
+                                    timeout: 3200,
+                                    theme: 'error'
+                                });
+                            } else {
+                                createSnackbar({
+                                    message: success ? 'Successfully made order.'
+                                        : 'Error while making order. Try again!',
+                                    timeout: 2500,
+                                    theme: success ? 'success' : 'error'
+                                });
+                                success && history.push(`/my-orders/${username}`);
+                            }
+                        }
                     }
                 ));
             }
