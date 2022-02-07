@@ -57,27 +57,50 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
     }, []);
 
     const handleAddToCart = id => {
-        if (Boolean(role)) {
-            dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
-                'productId': id,
-                'quantity': 1,
-            }, (success, response) => {
+        dispatch(ProductActions.checkProductQuantity({
+            productId: id,
+            quantity: 1,
+        }, (success, response) => {
+            if (success) {
+                if (!response.data.hasEnoughQuantity) {
+                    createSnackbar({
+                        message: `You can't add ${1} items of ${response.data.product.productTitle} to the cart, 
+                        there are only ${response.data.product.quantity} items available.`,
+                        timeout: 3200,
+                        theme: 'error'
+                    });
+                } else {
+                    if (Boolean(role)) {
+                        dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
+                            'productId': id,
+                            'quantity': 1,
+                        }, (success, response) => {
+                            createSnackbar({
+                                message: success ? 'Successfully added product to cart.'
+                                    : 'Failed to add product to cart.',
+                                timeout: 2500,
+                                theme: success ? 'success' : 'error'
+                            });
+                        }))
+                    } else {
+                        createSnackbar({
+                            message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
+                            timeout: 3000,
+                            theme: 'error'
+                        });
+                    }
+                }
+            } else {
                 createSnackbar({
-                    message: success ? 'Successfully added product to cart.' : 'Failed to add product to cart.',
+                    message: `Error while checking product quantity.`,
                     timeout: 2500,
-                    theme: success ? 'success' : 'error'
+                    theme: 'error'
                 });
-            }))
-        } else {
-            createSnackbar({
-                message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
-                timeout: 3000,
-                theme: 'error'
-            });
-        }
+            }
+        }))
     };
 
-    if (productsFetched && productsFetched.length === 0) {
+    if (categories.length === 0 && products.length === 0) {
         return (
             <div className={`container pt-5`}>
                 <div>
