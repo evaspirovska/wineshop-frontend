@@ -171,6 +171,9 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                                         gutterBottom variant="h5" component="div">
                                                 {product.productTitle}
                                             </Typography>
+                                            <Typography variant="body2" className={product.quantity > 0 ? "text-success" : "text-danger"}>
+                                                {product.quantity > 0 ? "In stock" : "Out of stock"}
+                                            </Typography>
                                             <Typography variant="h6" color="text.primary">
                                                 {product.priceInMKD} MKD
                                             </Typography>
@@ -180,6 +183,7 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                         <div className={`row p-1`}>
                                             <div className={`col`}>
                                                 <Button color={"primary"}
+                                                        disabled={product.quantity === 0}
                                                         onClick={() => handleAddToCart(product.id)}
                                                         variant="contained">
                                                     Add to cart

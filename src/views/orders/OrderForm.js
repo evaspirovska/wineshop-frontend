@@ -93,7 +93,15 @@ const OrderForm = wrapComponent(function ({createSnackbar}) {
                                     timeout: 3200,
                                     theme: 'error'
                                 });
-                            } else {
+                            }
+                            else if (response.data === "Postman not found!"){
+                                createSnackbar({
+                                    message: 'We currently have no postmans for your selected city. Please choose another one.',
+                                    timeout: 3200,
+                                    theme: 'error'
+                                });
+                            }
+                            else {
                                 createSnackbar({
                                     message: success ? 'Successfully made order.'
                                         : 'Error while making order. Try again!',
