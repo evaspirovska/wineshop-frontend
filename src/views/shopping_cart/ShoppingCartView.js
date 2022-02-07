@@ -64,7 +64,7 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
     const calculateTotalPrice = products => {
         let totalPrice = 0;
         products.map(product => (
-            totalPrice += product.priceInMKD
+            totalPrice += product.priceInMKD * product.quantity
         ))
         return totalPrice;
     }
@@ -101,15 +101,7 @@ const ShoppingCartView = wrapComponent(function ({createSnackbar}) {
                                 <TableCell align="left">{productInCart.productTitle}</TableCell>
                                 <TableCell align="left">{productInCart.priceInMKD} MKD</TableCell>
                                 <TableCell align="left">
-                                    <TextField
-                                        id="quantity"
-                                        name="quantity"
-                                        label="Quantity"
-                                        type="number"
-                                        disabled
-                                        className={`input-number-width`}
-                                        value={productInCart.quantity}
-                                    />
+                                    {productInCart.quantity}
                                 </TableCell>
                                 <TableCell align="left">
                                     {productInCart.priceInMKD * productInCart.quantity} MKD

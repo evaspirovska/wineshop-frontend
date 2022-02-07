@@ -85,7 +85,7 @@ const OrderForm = wrapComponent(function ({createSnackbar}) {
                         address: values.address
                     }, (success, response) => {
                         if (success) {
-                            if (Boolean(response.data.hasEnoughQuantity) && !response.data.hasEnoughQuantity) {
+                            if (response.data.hasEnoughQuantity !== undefined && !response.data.hasEnoughQuantity) {
                                 createSnackbar({
                                     message: `You can't add the desired quantity of 
                                     ${response.data.product.productTitle} to the cart, 
