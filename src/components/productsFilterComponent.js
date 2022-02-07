@@ -25,50 +25,52 @@ const ProductsFilterComponent = (props) => {
     const dispatch = useDispatch();
 
     useEffect( () =>{
-        var allSets = []
-        var priceArray = []
-        products.forEach(product => {
-            var tempSet = new Set()
-            for(var key in product.attributeIdAndValueMap) {
-                var value = product.attributeIdAndValueMap[key];
-                if(!isNaN(parseFloat(value))){
-                    value = parseFloat(value)
+        if(products.length > 0) {
+            var allSets = []
+            var priceArray = []
+            products.forEach(product => {
+                var tempSet = new Set()
+                for (var key in product.attributeIdAndValueMap) {
+                    var value = product.attributeIdAndValueMap[key];
+                    if (!isNaN(parseFloat(value))) {
+                        value = parseFloat(value)
+                    }
+                    var temp = tempSet[key]
+                    if (temp === undefined) {
+                        temp = new Set()
+                    }
+                    temp.add(value)
+                    tempSet[key] = temp
                 }
-                var temp = tempSet[key]
-                if(temp === undefined){
-                    temp = new Set()
+                allSets.push(tempSet)
+                priceArray.push(product.priceInMKD)
+            })
+            var attributeIDs = []
+            for (var key in allSets) {
+                var tempArray = []
+                for (var key2 in allSets[key]) {
+                    tempArray.push(key2)
                 }
-                temp.add(value)
-                tempSet[key] = temp
+                attributeIDs.push(tempArray)
             }
-            allSets.push(tempSet)
-            priceArray.push(product.priceInMKD)
-        })
-        var attributeIDs = []
-        for(var key in allSets){
-            var tempArray = []
-            for(var key2 in allSets[key]){
-                tempArray.push(key2)
+            var attributeIDsIntersection = attributeIDs.reduce((a, b) => a.filter(c => b.includes(c)))
+            var finalSet = new Set()
+            for (let i = 0; i < attributeIDsIntersection.length; i++) {
+                var tempSet = new Set()
+                for (var key in allSets) {
+                    tempSet.add(allSets[key][attributeIDsIntersection[i]].values().next().value)
+                }
+                finalSet[attributeIDsIntersection[i]] = tempSet
             }
-            attributeIDs.push(tempArray)
-        }
-        var attributeIDsIntersection = attributeIDs.reduce((a, b) => a.filter(c => b.includes(c)))
-        var finalSet = new Set()
-        for(let i=0; i<attributeIDsIntersection.length; i++){
-            var tempSet = new Set()
-            for (var key in allSets){
-                tempSet.add(allSets[key][attributeIDsIntersection[i]].values().next().value)
+            setAttributeSets(finalSet)
+            if (priceRange.length === 0) {
+                setPriceRange([
+                    Math.min.apply(null, priceArray),
+                    Math.max.apply(null, priceArray)
+                ])
             }
-            finalSet[attributeIDsIntersection[i]] = tempSet
+            setNeededAttributes([])
         }
-        setAttributeSets(finalSet)
-        if(priceRange.length === 0){
-            setPriceRange([
-                Math.min.apply(null, priceArray),
-                Math.max.apply(null, priceArray)
-            ])
-        }
-        setNeededAttributes([])
     }, [productsChanged])
 
     //todo: presekot na atributi e dobar, vidi zashto cenata se duplira koga se menjaat

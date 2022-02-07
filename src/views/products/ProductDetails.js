@@ -153,6 +153,7 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                                 <Button className={`py-3 px-5`}
                                         color='primary'
                                         variant='contained'
+                                        disabled={product.quantity === 0}
                                         onClick={() => handleAddToCart(productId, quantity)}
                                 >
                                     Add to cart
@@ -161,6 +162,9 @@ const ProductDetails = wrapComponent(function ({createSnackbar}) {
                         </div>
                         <div className={`pt-5`}>
                             Category: {product.categoryName}
+                        </div>
+                        <div className={product.quantity > 0 ? "pt-3 text-success" : "pt-3 text-danger"}>
+                            {product.quantity > 0 ? "In stock" : "Out of stock"}
                         </div>
                     </div>
                 </div>

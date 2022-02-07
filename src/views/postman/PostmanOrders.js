@@ -113,6 +113,7 @@ const PostmanOrders = wrapComponent(function ({createSnackbar}) {
                                                 onChange={(event) =>
                                                     handleOrderStatusChange(order.id, event.target.value)}
                                                 value={order.orderStatus}
+                                                disabled={order.orderStatus === 'DELIVERED'}
                                         >
                                             {
                                                 Object.keys(OrderStatus).map(orderStatus => (
