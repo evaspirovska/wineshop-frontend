@@ -62,7 +62,13 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
             quantity: 1,
         }, (success, response) => {
             if (success) {
-                if (!response.data.hasEnoughQuantity) {
+                if (response.data === 'Unauthenticated') {
+                    createSnackbar({
+                        message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
+                        timeout: 3000,
+                        theme: 'error'
+                    });
+                } else if (!response.data.hasEnoughQuantity) {
                     createSnackbar({
                         message: `You can't add ${1} items of ${response.data.product.productTitle} to the cart, 
                         there are only ${response.data.product.quantity} items available.`,
@@ -70,25 +76,17 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                         theme: 'error'
                     });
                 } else {
-                    if (Boolean(role)) {
-                        dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
-                            'productId': id,
-                            'quantity': 1,
-                        }, (success, response) => {
-                            createSnackbar({
-                                message: success ? 'Successfully added product to cart.'
-                                    : 'Failed to add product to cart.',
-                                timeout: 2500,
-                                theme: success ? 'success' : 'error'
-                            });
-                        }))
-                    } else {
+                    dispatch(ShoppingCartActions.addToShoppingCart(auth.username, {
+                        'productId': id,
+                        'quantity': 1,
+                    }, (success, response) => {
                         createSnackbar({
-                            message: 'Sorry, you must be signed in in order to add items to your shopping cart.',
-                            timeout: 3000,
-                            theme: 'error'
+                            message: success ? 'Successfully added product to cart.'
+                                : 'Failed to add product to cart.',
+                            timeout: 2500,
+                            theme: success ? 'success' : 'error'
                         });
-                    }
+                    }))
                 }
             } else {
                 createSnackbar({
@@ -171,7 +169,8 @@ const ProductView = wrapComponent(function ({createSnackbar}) {
                                                         gutterBottom variant="h5" component="div">
                                                 {product.productTitle}
                                             </Typography>
-                                            <Typography variant="body2" className={product.quantity > 0 ? "text-success" : "text-danger"}>
+                                            <Typography variant="body2"
+                                                        className={product.quantity > 0 ? "text-success" : "text-danger"}>
                                                 {product.quantity > 0 ? "In stock" : "Out of stock"}
                                             </Typography>
                                             <Typography variant="h6" color="text.primary">
